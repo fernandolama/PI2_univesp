@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Clientes{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">Lista de Clientes</h1>
+        <a class="btn btn-primary mb-3" href="{% url 'client_create' %}">Adicionar Cliente</a>
+        <a class="btn btn-secondary mb-3" href="{% url 'home' %}">Página Inicial</a>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Celular</th>
+                        <th scope="col">Endereço</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr>
+                            <td>{{ client.name }}</td>
+                            <td>({{ client.cellphone.area_code }}) {{ client.cellphone.number }}</td>
+                            <td>{{ client.address.street }}, {{ client.address.number }}</td>
+                            <td>{{ client.email }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'client_edit' client.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                                    <a href="{% url 'client_delete' client.pk %}" class="btn btn-sm btn-danger">Remover</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        /* Estilos CSS personalizados para a tabela */
+        .container {
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+{% endblock %}
