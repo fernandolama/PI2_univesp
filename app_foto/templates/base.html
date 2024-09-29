@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Minha Aplicação{% endblock %}</title>
+    <!-- Incluir Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos CSS personalizados -->
+    <style>
+        body {
+            background-color: #f8f9fa; /* Cor de fundo para o corpo */
+        }
+        .custom-navbar {
+            background-color: #007bff; /* Cor de fundo da barra de navegação */
+            color: #fff; /* Cor do texto da barra de navegação */
+        }
+        .custom-container {
+            margin-top: 30px; /* Espaçamento superior para o conteúdo */
+            background-color: #fff; /* Cor de fundo do conteúdo */
+            padding: 20px; /* Preenchimento interno do conteúdo */
+            border-radius: 8px; /* Arredondar cantos do conteúdo */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra leve */
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <a class="navbar-brand" href="{% url 'home' %}">GERENCIAR SERVIÇOS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-4 custom-container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Incluir Bootstrap JS e dependências do jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

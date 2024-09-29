@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar/Editar Cliente{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Adicionar/Editar Cliente</h1>
+    <a class="btn btn-secondary mb-3" href="{% url 'home' %}">Página Inicial</a>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Campos do formulário -->
+        <div class="mb-3">
+            <label for="{{ client_form.name.id_for_label }}" class="form-label">Nome:</label>
+            {{ client_form.name }}
+            <div class="invalid-feedback">{{ client_form.name.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ client_form.email.id_for_label }}" class="form-label">Email:</label>
+            {{ client_form.email }}
+            <div class="invalid-feedback">{{ client_form.email.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ client_form.birthday.id_for_label }}" class="form-label">Data de nascimento:</label>
+            {{ client_form.birthday }}
+            <div class="invalid-feedback">{{ client_form.birthday.errors }}</div>
+        </div>
+
+        <h4 class="my-4">Celular</h4>
+
+        {{ cellphone_formset.management_form }}
+        {% for form in cellphone_formset %}
+            <div class="mb-3">
+                <label for="{{ form.area_code.id_for_label }}" class="form-label">Código de área:</label>
+                {{ form.area_code }} Insira o código de área (Ex.11 para São Paulo)
+                <div class="invalid-feedback">{{ form.area_code.errors }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.number.id_for_label }}" class="form-label">Número:</label>
+                {{ form.number }}
+                <div class="invalid-feedback">{{ form.number.errors }}</div>
+            </div>
+        {% endfor %}
+
+        <h4 class="my-4">Endereço</h4>
+
+        {{ address_formset.management_form }}
+        {% for form in address_formset %}
+            <div class="mb-3">
+                <label for="{{ form.street.id_for_label }}" class="form-label">Rua:</label>
+                {{ form.street }}
+                <div class="invalid-feedback">{{ form.street.errors }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.number.id_for_label }}" class="form-label">Número:</label>
+                {{ form.number }}
+                <div class="invalid-feedback">{{ form.number.errors }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.complement.id_for_label }}" class="form-label">Complemento:</label>
+                {{ form.complement }}
+                <div class="invalid-feedback">{{ form.complement.errors }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.zipcode.id_for_label }}" class="form-label">CEP:</label>
+                {{ form.zipcode }}
+                <div class="invalid-feedback">{{ form.zipcode.errors }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.city.id_for_label }}" class="form-label">Cidade:</label>
+                {{ form.city }}
+                <div class="invalid-feedback">{{ form.city.errors }}</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.state.id_for_label }}" class="form-label">Estado:</label>
+                {{ form.state }}
+                <div class="invalid-feedback">{{ form.state.errors }}</div>
+            </div>
+        {% endfor %}
+
+        <!-- Botão de envio -->
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+
+<style>
+    /* Estilos CSS personalizados para o formulário */
+    .container {
+        margin-top: 50px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 50px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .mb-3 {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+
+    /* Estilos para o botão de envio */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+</style>
+{% endblock %}
