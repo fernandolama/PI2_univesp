@@ -1,47 +1,77 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 
-class BaseModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-class Client(BaseModel):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    birthday = models.DateField()
+# Model para Clientes
+class Cliente(models.Model):
+    nome = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=15, blank=True)
+    
+    # Novos campos para endereço
+    rua = models.CharField(max_length=255)
+    numero = models.CharField(max_length=10)
+    bairro = models.CharField(max_length=100)
+    cidade = models.CharField(max_length=100)
+    cep = models.CharField(max_length=10)
+    estado = models.CharField(max_length=2)  # Sigla do estado (ex: SP, RJ)
 
     def __str__(self):
-        return f'{self.name}'
+        return self.nome
 
-class Cellphone(BaseModel):
-    client = models.OneToOneField(Client, on_delete=models.CASCADE, related_name='cellphones')
-    area_code = models.IntegerField(
-        validators=[MinValueValidator(10), MaxValueValidator(99)],
-         help_text="Informe o código de área com dois dígitos (ex: 11 para São Paulo)"    
+
+# Model para Pedidos de Impressão de Fotos
+class PedidoImpressao(models.Model):
+    TAMANHO_OPCOES = [
+        ('10x15', '10x15 cm'),
+        ('15x21', '15x21 cm'),
+        ('20x30', '20x30 cm'),
+    ]
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    tamanho_foto = models.CharField(max_length=10, choices=TAMANHO_OPCOES)
+    quantidade = models.PositiveIntegerField()
+    preco_unitario = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def calcular_total(self):
+        return self.quantidade * self.preco_unitario
+
+    def __str__(self):
+        return f"Pedido de {self.cliente.nome} - {self.tamanho_foto}"
+
+# Model para Orçamentos de Eventos
+class OrcamentoEvento(models.Model):
+    TIPO_EVENTO_OPCOES = [
+        ('cha_revelacao', 'Chá Revelação'),
+        ('cha_bebe', 'Chá de Bebê'),
+        ('acompanhamento_12_meses', 'Acompanhamento 12 meses'),
+        ('aniversario_1_ano', 'Aniversário 1 ano'),
+        ('aniversario_outros', 'Aniversário outros'),
+        ('festa_debutante', 'Festa de debutante'),
+        ('formatura', 'Formatura'),
+        ('pre_wedding', 'Pré-Wedding'),
+        ('casamento', 'Casamento'),
+        ('outros', 'Outros'),
+    ]
+
+    tipo_evento = models.CharField(
+        max_length=50,
+        choices=TIPO_EVENTO_OPCOES,
+        default='outros'
     )
-    number = models.IntegerField(
-        validators=[MinValueValidator(10000000), MaxValueValidator(999999999)],
-        help_text="Informe o número de telefone sem o código de área"
-    )
+    cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
+    data_evento = models.DateField()
+    local_evento = models.CharField(max_length=255)
+    descricao = models.CharField(max_length=255, default='descrição padrão')
+    def __str__(self):
+        return f"Orçamento para {self.get_tipo_evento_display()} - {self.cliente}"
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    tipo_evento = models.CharField(max_length=50, choices=TIPO_EVENTO_OPCOES)
+    data_evento = models.DateField()
+    local_evento = models.CharField(max_length=100)
+    descricao = models.CharField(max_length=255, default='descrição padrão')
 
     def __str__(self):
-        return f'{self.client.name} - ({self.area_code}) {self.number}'
-
-class Address(BaseModel):
-    client = models.OneToOneField(Client, on_delete=models.CASCADE, related_name='addresses')
-    street = models.CharField(max_length=100)
-    number = models.CharField(max_length=8)
-    complement = models.CharField(max_length=100, blank=True, null=True)
-    zipcode = models.CharField(max_length=8)
-    city = models.CharField(max_length=50)
-    state = models.CharField(max_length=2)
-
-    def __str__(self):
-        complement_str = f' - {self.complement}' if self.complement else ''
-        return f'{self.client.name} - {self.street}, {self.number}{complement_str}\n{self.zipcode} {self.city}-{self.state}'
+        return f"Orçamento para {self.cliente.nome} ({self.tipo_evento})"
 
 class ServiceType(models.TextChoices):
     CHA_REVELACAO = "Chá revelação"
@@ -55,16 +85,34 @@ class ServiceType(models.TextChoices):
     CASAMENTO = "Casamento"
     OUTROS = "Outros"
 
-class Service(BaseModel):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='services')
-    service_type = models.CharField(
+class Pedido(models.Model):
+    cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
+    tipo_servico = models.CharField(
         max_length=50,
-        choices=ServiceType.choices
+        choices=ServiceType.choices,
+        default=ServiceType.OUTROS
     )
-    description = models.TextField(blank=True, null=True)
-    date = models.DateField()
-    hour = models.TimeField()
-    local = models.OneToOneField(Address, on_delete=models.CASCADE, related_name='services')
+
+class Servico(models.Model):
+    TIPO_SERVICO_OPCOES = [
+        ('cha_revelacao', 'Chá Revelação'),
+        ('cha_bebe', 'Chá de Bebê'),
+        ('acompanhamento_12_meses', 'Acompanhamento 12 meses'),
+        ('aniversario_1_ano', 'Aniversário 1 ano'),
+        ('aniversario_outros', 'Aniversário outros'),
+        ('festa_debutante', 'Festa de debutante'),
+        ('formatura', 'Formatura'),
+        ('pre_wedding', 'Pré-Wedding'),
+        ('casamento', 'Casamento'),
+        ('outros', 'Outros'),
+    ]
+
+    tipo_servico = models.CharField(
+        max_length=50,
+        choices=TIPO_SERVICO_OPCOES,
+        default='outros'
+    )
+    descricao = models.TextField(blank=True)
 
     def __str__(self):
-        return f'{self.client.name} - {self.get_service_type_display()}'
+        return self.get_tipo_servico_display()

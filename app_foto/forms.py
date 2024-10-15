@@ -1,41 +1,39 @@
 from django import forms
-from django.forms import inlineformset_factory
-from .models import Address, Cellphone, Client, Service
+from .models import PedidoImpressao, OrcamentoEvento, Pedido, Cliente, Servico
 
-class ClientForm(forms.ModelForm):
-    birthday = forms.DateField(
-        widget=forms.DateInput(format='%d-%m-%Y', attrs={'type': 'date'}),
-        input_formats=['%d-%m-%Y']
+class PedidoImpressaoForm(forms.ModelForm):
+    class Meta:
+        model = PedidoImpressao
+        fields = ['cliente', 'tamanho_foto', 'quantidade', 'preco_unitario']
+
+class OrcamentoEventoForm(forms.ModelForm):
+    class Meta:
+        model = OrcamentoEvento
+        fields = ['cliente', 'tipo_evento', 'data_evento', 'local_evento', 'descricao']
+
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['cliente', 'tipo_servico']         
+
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['nome', 'email', 'telefone', 'rua', 'bairro', 'numero', 'cidade', 'cep', 'estado']  
+
+
+class ServicoForm(forms.ModelForm):
+    class Meta:
+        model = Servico
+        fields = ['tipo_servico', 'descricao']
+
+    # Personalize o widget para o campo 'tipo_servico'
+    tipo_servico = forms.ChoiceField(
+        choices=Servico.TIPO_SERVICO_OPCOES,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
-    class Meta:
-        model = Client
-        fields = '__all__'
 
-class CellphoneForm(forms.ModelForm):
-    class Meta:
-        model = Cellphone
-        fields = ['area_code', 'number']
-        widgets = {
-            'area_code': forms.TextInput(attrs={
-                'class': 'simple-input',
-                'placeholder': 'DDD'
-            }),
-            'number': forms.TextInput(attrs={
-                'class': 'simple-input',
-                'placeholder': 'XXXXXXXXX'
-            })
-        }
-
-class AddressForm(forms.ModelForm):
-    class Meta:
-        model = Address
-        fields = ['street', 'number', 'complement', 'zipcode', 'city', 'state']
-
-class ServiceForm(forms.ModelForm):
-    class Meta:
-        model = Service
-        fields = ['client', 'service_type', 'description', 'date', 'hour', 'local']
-
-
-CellphoneFormSet = inlineformset_factory(Client, Cellphone, fields=('area_code', 'number'), extra=1)
-AddressFormSet = inlineformset_factory(Client, Address, fields=('street', 'number', 'complement', 'zipcode', 'city', 'state'), extra=1)
+    descricao = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        required=False
+    )
