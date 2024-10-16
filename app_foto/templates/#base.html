@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Plataforma de Fotos{% endblock %}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos CSS personalizados -->
+    <style>
+        body {
+            background-color: #f8f9fa; /* Cor de fundo para o corpo */
+        }
+        .custom-navbar {
+            background-color: #007bff; /* Cor de fundo da barra de navegação */
+            color: #fff; /* Cor do texto da barra de navegação */
+        }
+        .custom-container {
+            margin-top: 30px; /* Espaçamento superior para o conteúdo */
+            background-color: #fff; /* Cor de fundo do conteúdo */
+            padding: 20px; /* Preenchimento interno do conteúdo */
+            border-radius: 8px; /* Arredondar cantos do conteúdo */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra leve */
+        }
+    </style>
+</head>
+<body>
+    
+    <nav>
+        <ul>
+            <li><a href="{% url 'listar_clientes' %}">Clientes</a></li>
+            <li><a href="{% url 'listar_servicos' %}">Serviços</a></li>
+            <li><a href="{% url 'listar_orcamentos' %}">Orçamentos</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        <!-- Conteúdo da página -->
+        {% endblock %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
