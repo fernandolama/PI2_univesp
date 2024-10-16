@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
                     "cliente",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="pedidos.cliente",
+                        to="app_foto.cliente",
                     ),
                 ),
             ],
@@ -147,7 +147,7 @@ class Migration(migrations.Migration):
                     "cliente",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="pedidos.cliente",
+                        to="app_foto.cliente",
                     ),
                 ),
             ],
@@ -181,7 +181,7 @@ class Migration(migrations.Migration):
                     "cliente",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="pedidos.cliente",
+                        to="app_foto.cliente",
                     ),
                 ),
             ],
