@@ -1,22 +1,52 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+class BaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
 
 # Model para Clientes
-class Cliente(models.Model):
+class Cliente(BaseModel):
     nome = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=15, blank=True)
+    data_nascimento = models.DateField()
     
-    # Novos campos para endereço
-    rua = models.CharField(max_length=255)
-    numero = models.CharField(max_length=10)
-    bairro = models.CharField(max_length=100)
-    cidade = models.CharField(max_length=100)
-    cep = models.CharField(max_length=10)
-    estado = models.CharField(max_length=2)  # Sigla do estado (ex: SP, RJ)
+    def __str__(self):
+        return f'{self.nome}'
+
+class Telefone(BaseModel):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='telefones')
+    codigo_area = models.IntegerField(
+        validators=[MinValueValidator(10), MaxValueValidator(99)],
+         help_text="Informe o código de área com dois dígitos (ex: 11 para São Paulo)"    
+    )
+    numero = models.IntegerField(
+        validators=[MinValueValidator(10000000), MaxValueValidator(999999999)],
+        help_text="Informe o número de telefone sem o código de área"
+    )
 
     def __str__(self):
-        return self.nome
+        return f'{self.cliente.nome} - ({self.codigo_area}) {self.numero}'
 
+
+class Endereco(BaseModel):
+    cliente = models.OneToOneField(Cliente, on_delete=models.CASCADE, related_name='enderecos')
+    rua = models.CharField(max_length=100)
+    numero = models.CharField(max_length=8)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
+    bairro = models.CharField(max_length=100)
+    cep = models.CharField(max_length=8)
+    cidade = models.CharField(max_length=50)
+    estado = models.CharField(max_length=2)
+
+    def __str__(self):
+        complemento_str = f' - {self.complemento}' if self.complemento else ''
+        return f'{self.cliente.nome} - {self.rua}, {self.numero}\n{complemento_str}\n{self.bairro} {self.cep}\n{self.cidade}-{self.estado}'
+    
 
 # Model para Pedidos de Impressão de Fotos
 class PedidoImpressao(models.Model):
