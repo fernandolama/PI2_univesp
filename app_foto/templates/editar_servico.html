@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+<h2>Editar Serviço: {{ servico.nome }}</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar Alterações</button>
+</form>
+<a href="{% url 'listar_servicos' %}">Voltar para Lista de Serviços</a>
+{% endblock %}

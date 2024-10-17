@@ -1,0 +1,9 @@
+<!-- confirmar_exclusao.html -->
+<h2>Tem certeza de que deseja excluir este {{ tipo }}?</h2>
+<p>{{ objeto }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Confirmar Exclusão</button>
+    <a href="javascript:history.back()">Cancelar</a>
+</form>

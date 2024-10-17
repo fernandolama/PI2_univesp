@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Orçamento{% endblock %}
+
+{% block content %}
+<h2>Editar Orçamento para {{ orcamento.get_tipo_evento_display }}</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar Alterações</button>
+</form>
+<a href="{% url 'listar_orcamentos' %}">Voltar para Lista de Orçamentos</a>
+{% endblock %}

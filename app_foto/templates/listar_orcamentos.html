@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+
+<h2>Tipos de Serviço (Orçamentos)</h2>
+
+<table>
+    <tr>
+        <th>Tipo de Evento</th>
+        <th>Cliente</th>
+        <th>Data do Evento</th>
+        <th>Local do Evento</th>
+        <th>Descrição</th>
+    </tr>
+    {% for orcamento in orcamentos %}
+    <tr>
+        <td>{{ orcamento.get_tipo_evento_display }}</td>
+        <td>{{ orcamento.cliente.nome }}</td>
+        <td>{{ orcamento.data_evento }}</td>
+        <td>{{ orcamento.local_evento }}</td>
+        <td>{{ orcamento.descricao }}</td>
+        <td><a href="{% url 'editar_orcamento' orcamento.pk %}">Editar</a></td>
+        <td><a href="{% url 'excluir_orcamento' orcamento.pk %}">Excluir</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'novo_orcamento' %}">Novo Orçamento</a>
+{% endblock %}
