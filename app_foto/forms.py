@@ -1,39 +1,41 @@
 from django import forms
-from .models import PedidoImpressao, OrcamentoEvento, Pedido, Cliente, Servico
+from .models import PedidoImpressao, OrcamentoEvento, Cliente, Endereco, Telefone
 
 class PedidoImpressaoForm(forms.ModelForm):
     class Meta:
         model = PedidoImpressao
         fields = ['cliente', 'tamanho_foto', 'quantidade', 'preco_unitario']
 
+    tamanho_foto = forms.ChoiceField(
+        choices=PedidoImpressao.TAMANHO_OPCOES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
 class OrcamentoEventoForm(forms.ModelForm):
     class Meta:
         model = OrcamentoEvento
-        fields = ['cliente', 'tipo_evento', 'data_evento', 'local_evento', 'descricao']
+        fields = ['cliente', 'tipo_evento', 'data_evento', 'local_evento', 'apenas_foto', 'foto_video', 'registros_impressos', 'apenas_digital', 'acabamento_simples', 'acabamento_especial' , 'outros_detalhes']
 
-class PedidoForm(forms.ModelForm):
-    class Meta:
-        model = Pedido
-        fields = ['cliente', 'tipo_servico']         
+    tipo_evento = forms.ChoiceField(
+        choices=OrcamentoEvento.TIPO_EVENTO_OPCOES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    outros_detalhes = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        required=False
+    )
 
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = ['nome', 'email', 'telefone', 'rua', 'bairro', 'numero', 'cidade', 'cep', 'estado']  
+        fields = ['nome', 'email', 'data_nascimento']  
 
-
-class ServicoForm(forms.ModelForm):
+class EnderecoForm(forms.ModelForm):
     class Meta:
-        model = Servico
-        fields = ['tipo_servico', 'descricao']
+        model = Endereco
+        fields = [ 'rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado']
 
-    # Personalize o widget para o campo 'tipo_servico'
-    tipo_servico = forms.ChoiceField(
-        choices=Servico.TIPO_SERVICO_OPCOES,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
-    descricao = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
-        required=False
-    )
+class TelefoneForm(forms.ModelForm):
+    class Meta:
+        model = Telefone
+        fields = ['cliente', 'codigo_area', 'numero']
