@@ -10,7 +10,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-# Model para Clientes
 class Cliente(BaseModel):
     nome = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -45,8 +44,8 @@ class Endereco(BaseModel):
     estado = models.CharField(max_length=2)
 
     def __str__(self):
-        complemento_str = f' - {self.complemento}' if self.complemento else ''
-        return f'{self.cliente.nome} - {self.rua}, {self.numero}\n{complemento_str}\n{self.bairro} {self.cep}\n{self.cidade}-{self.estado}'
+        complemento_str = f' - {self.complemento}\n' if self.complemento else ''
+        return f'{self.cliente.nome} - {self.rua}, {self.numero}\n{complemento_str}{self.bairro} {self.cep}\n{self.cidade}-{self.estado}'
     
 
 # Model para Pedidos de Impressão de Fotos
@@ -98,7 +97,7 @@ class OrcamentoEvento(models.Model):
     apenas_digital = models.BooleanField(default=False, verbose_name="Apenas digital?")
     acabamento_simples = models.BooleanField(default=False, verbose_name="Acabamento do álbum simples?")
     acabamento_especial = models.BooleanField(default=False, verbose_name="Acabamento do álbum especial?")
-    outros_detalhes = models.CharField(max_length=500)
+    outros_detalhes = models.CharField(max_length=500, blank=True, null=True)
     
     PRECO_TIPO_EVENTO = {
         'cha_revelacao': 500.0,

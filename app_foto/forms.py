@@ -20,6 +20,7 @@ class OrcamentoEventoForm(forms.ModelForm):
         choices=OrcamentoEvento.TIPO_EVENTO_OPCOES,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
+    local_evento = forms.ModelChoiceField(queryset=Endereco.objects.all(), required=False, label="Local do Evento")
     outros_detalhes = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         required=False
