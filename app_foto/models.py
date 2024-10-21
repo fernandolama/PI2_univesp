@@ -49,7 +49,7 @@ class Endereco(BaseModel):
     
 
 # Model para Pedidos de Impressão de Fotos
-class PedidoImpressao(models.Model):
+class PedidoImpressao(BaseModel):
     TAMANHO_OPCOES = [
         ('10x15', '10x15 cm'),
         ('15x21', '15x21 cm'),
@@ -67,71 +67,37 @@ class PedidoImpressao(models.Model):
     def __str__(self):
         return f"Pedido de {self.cliente.nome} - R$ {self.calcular_total_pedido()}"
 
-# Model para Orçamentos de Eventos
-class OrcamentoEvento(models.Model):
-    TIPO_EVENTO_OPCOES = [
-        ('cha_revelacao', 'Chá Revelação'),
-        ('cha_bebe', 'Chá de Bebê'),
-        ('acompanhamento_12_meses', 'Acompanhamento 12 meses'),
-        ('aniversario_1_ano', 'Aniversário 1 ano'),
-        ('aniversario_outros', 'Aniversário outros'),
-        ('festa_debutante', 'Festa de debutante'),
-        ('formatura', 'Formatura'),
-        ('pre_wedding', 'Pré-Wedding'),
-        ('casamento', 'Casamento'),
-        ('corporativo', 'Evento corporativo'),
-        ('outros', 'Outros'),
-    ]
+class TipoEvento(BaseModel):
+    nome = models.CharField(max_length=50, unique=True)
+    preco = models.DecimalField(max_digits=8, decimal_places=2, help_text="Preço para este tipo de evento")
 
+    def __str__(self):
+        return f"{self.nome}"
+    
+class RecursoEvento(BaseModel):
+    nome = models.CharField(max_length=100, unique=True, help_text="Nome do recurso adicional")
+    preco = models.DecimalField(max_digits=8, decimal_places=2, help_text="Preço para este recurso")
+    
+    def __str__(self):
+        return self.nome
+
+class OrcamentoEvento(BaseModel):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="eventos")
-    tipo_evento = models.CharField(
-        max_length=50,
-        choices=TIPO_EVENTO_OPCOES,
-        default='outros'
-    )
+    tipo_evento = models.ForeignKey(TipoEvento, on_delete=models.CASCADE, related_name="orcamentos")
     data_evento = models.DateField()
     local_evento = models.ForeignKey(Endereco, on_delete=models.CASCADE, related_name="eventos")
-    apenas_foto = models.BooleanField(default=False, verbose_name="Apenas foto?")
-    foto_video = models.BooleanField(default=False, verbose_name="Foto e vídeo?")
-    registros_impressos = models.BooleanField(default=False, verbose_name="Registros impressos?")
-    apenas_digital = models.BooleanField(default=False, verbose_name="Apenas digital?")
-    acabamento_simples = models.BooleanField(default=False, verbose_name="Acabamento do álbum simples?")
-    acabamento_especial = models.BooleanField(default=False, verbose_name="Acabamento do álbum especial?")
+    recursos_adicionais = models.ManyToManyField(RecursoEvento, related_name="orcamentos", blank=True)
     outros_detalhes = models.CharField(max_length=500, blank=True, null=True)
     
-    PRECO_TIPO_EVENTO = {
-        'cha_revelacao': 500.0,
-        'cha_bebe': 400.0,
-        'acompanhamento_12_meses': 100.0,
-        'aniversario_1_ano': 800.0,
-        'aniversario_outros': 700.0,
-        'festa_debutante': 1500.0,
-        'formatura': 1300.0,
-        'pre_wedding': 1000.0,
-        'casamento': 3000.0,
-        'corporativo': 2000.0,
-        'outros': 600.0,
-    }
-
     def calcular_total_evento(self):
         # Iniciar com o preço base do tipo de evento
-        total = self.PRECO_TIPO_EVENTO.get(self.tipo_evento, 0)
+        total = self.tipo_evento.preco
 
-        # Adicionar valores adicionais com base nas opções selecionadas
-        if self.apenas_foto:
-            total += 500 
-        if self.foto_video:
-            total += 1000
-        if self.registros_impressos:
-            total += 300 
-        if self.apenas_digital:
-            total += 200 
-        if self.acabamento_simples:
-            total += 150 
-        if self.acabamento_especial:
-            total += 350 
+        # Somar preços dos recursos adicionais
+        for recurso in self.recursos_adicionais.all():
+            total += recurso.preco
 
         return total
         
     def __str__(self):
-        return f"Orçamento para {self.get_tipo_evento_display()} - {self.cliente}: R$ {self.calcular_total_evento()}"
+        return f"Orçamento para {self.tipo_evento} - {self.cliente}: R$ {self.calcular_total_evento()}"

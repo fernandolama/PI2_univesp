@@ -11,6 +11,12 @@ urlpatterns = [
     path('pedidos/editar/<int:pk>/', views.editar_pedido, name='editar_pedido'),
     path('pedidos/excluir/<int:pk>/', views.excluir_pedido, name='excluir_pedido'), 
 
+    # CRUD de Recursos
+    path('recursos/novo/', views.novo_recurso, name='novo_recurso'),
+    path('recursos/', views.listar_recursos, name='listar_recursos'),
+    path('recursos/editar/<int:pk>/', views.editar_recurso, name='editar_recurso'),
+    path('recursos/excluir/<int:pk>/', views.excluir_recurso, name='excluir_recurso'), 
+
     # CRUD de Orçamentos
     path('orcamentos/novo/', views.novo_orcamento, name='novo_orcamento'),
     path('orcamentos/', views.listar_orcamentos, name='listar_orcamentos'),
