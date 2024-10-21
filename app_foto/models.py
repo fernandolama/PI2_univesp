@@ -47,26 +47,26 @@ class Endereco(BaseModel):
         complemento_str = f' - {self.complemento}\n' if self.complemento else ''
         return f'{self.cliente.nome} - {self.rua}, {self.numero}\n{complemento_str}{self.bairro} {self.cep}\n{self.cidade}-{self.estado}'
     
+class TamanhoFoto(BaseModel):
+    medidas = models.CharField(max_length=20, unique=True)
+    preco_unitario = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.medidas} - R$ {self.preco_unitario}'
+
 
 # Model para Pedidos de Impressão de Fotos
 class PedidoImpressao(BaseModel):
-    TAMANHO_OPCOES = [
-        ('10x15', '10x15 cm'),
-        ('15x21', '15x21 cm'),
-        ('20x30', '20x30 cm'),
-    ]
-
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="pedidos")
-    tamanho_foto = models.CharField(max_length=10, choices=TAMANHO_OPCOES)
+    tamanho_foto = models.ForeignKey(TamanhoFoto, on_delete=models.CASCADE, related_name="pedidos")
     quantidade = models.PositiveIntegerField()
-    preco_unitario = models.DecimalField(max_digits=6, decimal_places=2)
 
     def calcular_total_pedido(self):
-        return self.quantidade * self.preco_unitario
+        return self.quantidade * self.tamanho_foto.preco_unitario
 
     def __str__(self):
-        return f"Pedido de {self.cliente.nome} - R$ {self.calcular_total_pedido()}"
-
+        return f"Pedido de {self.cliente.nome} - [{self.quantidade} fotos de {self.tamanho_foto.medidas} R$ {self.calcular_total_pedido()}"
+    
 class TipoEvento(BaseModel):
     nome = models.CharField(max_length=50, unique=True)
     preco = models.DecimalField(max_digits=8, decimal_places=2, help_text="Preço para este tipo de evento")

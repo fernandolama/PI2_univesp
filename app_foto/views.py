@@ -1,11 +1,21 @@
 from django.shortcuts import render, redirect,  get_object_or_404
-from .forms import PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm
-from .models import PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente
+from .forms import TamanhoFotoForm, PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm
+from .models import TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente
 
 def homepage(request):
     return render(request, 'homepage.html')
 
 # Create
+
+def novo_tamanho(request):
+    if request.method == 'POST':
+        form = TamanhoFotoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_tamanhos')
+    else:
+        form = TamanhoFotoForm()
+    return render(request, 'novo_tamanho.html', {'form': form})
 
 def novo_pedido(request):
     if request.method == 'POST':
@@ -49,6 +59,10 @@ def novo_cliente(request):
 
 # Read
 
+def listar_tamanhos(request):
+    tamanhos = TamanhoFoto.objects.all()
+    return render(request, 'listar_tamanhos.html', {'tamanhos': tamanhos})
+
 def listar_recursos(request):
     recursos = RecursoEvento.objects.all()
     return render(request, 'listar_recursos.html', {'recursos': recursos})
@@ -66,6 +80,17 @@ def listar_pedidos(request):
     return render(request, 'listar_pedidos.html', {'pedidos': pedidos})
 
 # Update
+
+def editar_tamanho(request, pk):
+    tamanho = get_object_or_404(TamanhoFoto, pk=pk)
+    if request.method == 'POST':
+        form = TamanhoFotoForm(request.POST, instance=tamanho)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_tamanhos')
+    else:
+        form = OrcamentoEventoForm(instance=tamanho)
+    return render(request, 'editar_tamanho.html', {'form': form, 'tamanho': tamanho})
 
 def editar_orcamento(request, pk):
     orcamento = get_object_or_404(OrcamentoEvento, pk=pk)
@@ -112,6 +137,13 @@ def editar_pedido(request, pk):
     return render(request, 'editar_pedido.html', {'form': form, 'cliente': pedido})
 
 # Delete
+
+def excluir_tamanho(request, pk):
+    tamanho = get_object_or_404(TamanhoFoto, pk=pk)
+    if request.method == 'POST':
+        tamanho.delete()
+        return redirect('listar_tamanhos')
+    return render(request, 'confirmar_exclusao.html', {'objeto': tamanho, 'tipo': 'Tamanho'})
 
 def excluir_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)

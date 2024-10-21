@@ -5,6 +5,12 @@ urlpatterns = [
     # Home
     path('', views.homepage, name='homepage'), 
 
+    # CRUD de Tamanhos de Impressões
+    path('tamanhos/novo/', views.novo_tamanho, name='novo_tamanho'),
+    path('tamanhos/', views.listar_tamanhos, name='listar_tamanhos'),
+    path('tamanhos/editar/<int:pk>/', views.editar_tamanho, name='editar_tamanho'),
+    path('tamanhos/excluir/<int:pk>/', views.excluir_tamanho, name='excluir_tamanho'), 
+    
     # CRUD de Pedidos
     path('pedidos/novo/', views.novo_pedido, name='novo_pedido'),
     path('pedidos/', views.listar_pedidos, name='listar_pedidos'),

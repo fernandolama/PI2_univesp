@@ -1,14 +1,39 @@
 from django import forms
-from .models import PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente, Endereco, Telefone
+from .models import TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente, Endereco, Telefone
+
+class TamanhoFotoForm(forms.ModelForm):
+    class Meta:
+        model = TamanhoFoto
+        fields = ['medidas', 'preco_unitario']
+
+    medidas = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 10x15'}),
+        label="Medidas da Impressão",
+        required=True
+    )
+    preco_unitario = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Preço Unitário'}),
+        label="Preço Unitário",
+        required=True
+    )
 
 class PedidoImpressaoForm(forms.ModelForm):
     class Meta:
         model = PedidoImpressao
-        fields = ['cliente', 'tamanho_foto', 'quantidade', 'preco_unitario']
+        fields = ['cliente', 'tamanho_foto', 'quantidade']
 
-    tamanho_foto = forms.ChoiceField(
-        choices=PedidoImpressao.TAMANHO_OPCOES,
+    cliente = forms.ModelChoiceField(
+        queryset=Cliente.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    tamanho_foto = forms.ModelChoiceField(
+        queryset=TamanhoFoto.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Tamanho da Foto"
+    )
+    quantidade = forms.IntegerField(
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantidade'}),
+        label="Quantidade"
     )
 
 class RecursoEventoForm(forms.ModelForm):
