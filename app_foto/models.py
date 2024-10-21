@@ -54,19 +54,28 @@ class TamanhoFoto(BaseModel):
     def __str__(self):
         return f'{self.medidas} - R$ {self.preco_unitario}'
 
-
-# Model para Pedidos de Impressão de Fotos
 class PedidoImpressao(BaseModel):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="pedidos")
-    tamanho_foto = models.ForeignKey(TamanhoFoto, on_delete=models.CASCADE, related_name="pedidos")
-    quantidade = models.PositiveIntegerField()
-
+    
     def calcular_total_pedido(self):
+        total = sum(item.calcular_subtotal() for item in self.itens.all())
+        return total
+
+    def __str__(self):
+        return f"Pedido de {self.cliente.nome} - Total: R$ {self.calcular_total_pedido()}"
+
+
+class ItemPedido(BaseModel):
+    pedido = models.ForeignKey(PedidoImpressao, on_delete=models.CASCADE, related_name='itens')
+    tamanho_foto = models.ForeignKey(TamanhoFoto, on_delete=models.CASCADE, related_name='itens')
+    quantidade = models.PositiveIntegerField()
+    
+    def calcular_subtotal(self):
         return self.quantidade * self.tamanho_foto.preco_unitario
 
     def __str__(self):
-        return f"Pedido de {self.cliente.nome} - [{self.quantidade} fotos de {self.tamanho_foto.medidas} R$ {self.calcular_total_pedido()}"
-    
+        return f"{self.quantidade} foto(s) no tamanho {self.tamanho_foto.medidas}: R$ {self.calcular_subtotal()}"
+        
 class TipoEvento(BaseModel):
     nome = models.CharField(max_length=50, unique=True)
     preco = models.DecimalField(max_digits=8, decimal_places=2, help_text="Preço para este tipo de evento")

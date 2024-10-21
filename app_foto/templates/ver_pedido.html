@@ -1,0 +1,28 @@
+<h2>Pedido de {{ pedido.cliente.nome }}</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tamanho da Foto</th>
+            <th>Quantidade</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in itens %}
+        <tr>
+            <td>{{ item.tamanho_foto.descricao }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>R$ {{ item.calcular_subtotal }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="2">Total:</th>
+            <th>R$ {{ total }}</th>
+        </tr>
+    </tfoot>
+</table>
+
+<a href="{% url 'adicionar_item_pedido' pedido.id %}" class="btn btn-primary">Adicionar mais itens</a>

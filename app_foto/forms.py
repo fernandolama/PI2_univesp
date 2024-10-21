@@ -1,5 +1,5 @@
 from django import forms
-from .models import TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente, Endereco, Telefone
+from .models import ItemPedido, TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente, Endereco, Telefone
 
 class TamanhoFotoForm(forms.ModelForm):
     class Meta:
@@ -26,6 +26,21 @@ class PedidoImpressaoForm(forms.ModelForm):
         queryset=Cliente.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'})
     )
+    tamanho_foto = forms.ModelChoiceField(
+        queryset=TamanhoFoto.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Tamanho da Foto"
+    )
+    quantidade = forms.IntegerField(
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantidade'}),
+        label="Quantidade"
+    )
+
+class ItemPedidoForm(forms.ModelForm):
+    class Meta:
+        model = ItemPedido
+        fields = ['tamanho_foto', 'quantidade']
+    
     tamanho_foto = forms.ModelChoiceField(
         queryset=TamanhoFoto.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}),
