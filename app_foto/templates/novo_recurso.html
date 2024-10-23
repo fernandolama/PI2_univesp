@@ -4,9 +4,12 @@
 
 {% block content %}
 <h2>Novo Orçamento de Evento</h2>
+
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Solicitar Orçamento</button>
+    <button type="submit">Salvar Orçamento</button>
 </form>
+
+<a href="{% url 'listar_orcamentos' %}">Voltar para Lista de Orçamentos</a>
 {% endblock %}

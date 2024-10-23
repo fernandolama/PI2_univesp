@@ -1,0 +1,6 @@
+<h2>Editar Item do Pedido</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar alterações</button>
+</form>
