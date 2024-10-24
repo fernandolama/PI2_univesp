@@ -70,7 +70,7 @@ class RecursoEventoForm(forms.ModelForm):
 class OrcamentoEventoForm(forms.ModelForm):
     class Meta:
         model = OrcamentoEvento
-        fields = ['cliente', 'tipo_evento', 'data_evento', 'local_evento', 'recursos_adicionais' , 'outros_detalhes']
+        fields = ['cliente', 'tipo_evento', 'data_evento', 'hora_evento', 'local_evento', 'recursos_adicionais' , 'outros_detalhes']
 
     local_evento = forms.ModelChoiceField(queryset=Endereco.objects.all(), required=False, label="Local do Evento")
     recursos_adicionais = forms.ModelMultipleChoiceField(
