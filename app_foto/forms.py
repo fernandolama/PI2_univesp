@@ -102,3 +102,10 @@ class TelefoneForm(forms.ModelForm):
 
 TelefoneFormSet = inlineformset_factory(Cliente, Telefone, fields=('codigo_area', 'numero'), extra=1, can_delete=True)
 EnderecoFormSet = inlineformset_factory(Cliente, Endereco, fields=('rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado'), extra=1, can_delete=True)
+RecursoEventoFormSet = inlineformset_factory(
+    OrcamentoEvento,
+    RecursoEvento,
+    fields=('nome', 'preco'),
+    extra=1,
+    can_delete=True,
+)

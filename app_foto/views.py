@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,  get_object_or_404
-from .forms import ItemPedidoForm, TamanhoFotoForm, PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm
+from .forms import ItemPedidoForm, TamanhoFotoForm, PedidoImpressaoForm, OrcamentoEventoForm, ClienteForm, TelefoneFormSet, EnderecoFormSet, RecursoEventoFormSet
 from .models import ItemPedido, TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente
 
 def homepage(request):
@@ -52,23 +52,47 @@ def novo_recurso(request):
 
 def novo_orcamento(request):
     if request.method == 'POST':
-        form = OrcamentoEventoForm(request.POST)
-        if form.is_valid():
-            form.save()
+        orcamento_form = OrcamentoEventoForm(request.POST)
+        recurso_formset = RecursoEventoFormSet(request.POST)
+
+        if orcamento_form.is_valid() and recurso_formset.is_valid():
+            orcamento = orcamento_form.save()
+            recurso_formset.instance = orcamento
+            recurso_formset.save()
             return redirect('listar_orcamentos')
+    
     else:
-        form = OrcamentoEventoForm()
-    return render(request, 'novo_orcamento.html', {'form': form})
+        orcamento_form = OrcamentoEventoForm()
+        recurso_formset = RecursoEventoFormSet()
+    
+    return render(request, 'novo_orcamento.html', {
+        'orcamento_form': orcamento_form,
+        'recurso_formset': recurso_formset
+    })
 
 def novo_cliente(request):
     if request.method == 'POST':
-        form = ClienteForm(request.POST)
-        if form.is_valid():
-            form.save()
+        cliente_form = ClienteForm(request.POST)
+        telefone_formset = TelefoneFormSet(request.POST)
+        endereco_formset = EnderecoFormSet(request.POST)
+        
+        if cliente_form.is_valid() and telefone_formset.is_valid() and endereco_formset.is_valid():
+            cliente = cliente_form.save()
+            telefone_formset.instance = cliente
+            telefone_formset.save()
+            endereco_formset.instance = cliente
+            endereco_formset.save()
             return redirect('listar_clientes')
+    
     else:
-        form = ClienteForm()
-    return render(request, 'cadastrar_cliente.html', {'form': form})
+        cliente_form = ClienteForm()
+        telefone_formset = TelefoneFormSet()
+        endereco_formset = EnderecoFormSet()
+    return render(request, 'novo_cliente.html', {
+        'cliente_form': cliente_form,
+        'telefone_formset': telefone_formset,
+        'endereco_formset': endereco_formset
+    })
 
 # Read
 
@@ -127,14 +151,24 @@ def editar_tamanho(request, pk):
 
 def editar_orcamento(request, pk):
     orcamento = get_object_or_404(OrcamentoEvento, pk=pk)
+    
     if request.method == 'POST':
-        form = OrcamentoEventoForm(request.POST, instance=orcamento)
-        if form.is_valid():
-            form.save()
+        orcamento_form = OrcamentoEventoForm(request.POST, instance=orcamento)
+        recurso_formset = RecursoEventoFormSet(request.POST, instance=orcamento)
+        
+        if orcamento_form.is_valid() and recurso_formset.is_valid():
+            orcamento_form.save()
+            recurso_formset.save()
             return redirect('listar_orcamentos')
+    
     else:
-        form = OrcamentoEventoForm(instance=orcamento)
-    return render(request, 'editar_orcamento.html', {'form': form, 'orcamento': orcamento})
+        orcamento_form = OrcamentoEventoForm(instance=orcamento)
+        recurso_formset = RecursoEventoFormSet(instance=orcamento)
+    
+    return render(request, 'editar_orcamento.html', {
+        'orcamento_form': orcamento_form,
+        'recurso_formset': recurso_formset
+    })
 
 def editar_recurso(request, pk):
     recurso = get_object_or_404(RecursoEvento, pk=pk)
@@ -149,14 +183,28 @@ def editar_recurso(request, pk):
 
 def editar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
+    
     if request.method == 'POST':
-        form = ClienteForm(request.POST, instance=cliente)
-        if form.is_valid():
-            form.save()
+        cliente_form = ClienteForm(request.POST, instance=cliente)
+        telefone_formset = TelefoneFormSet(request.POST, instance=cliente)
+        endereco_formset = EnderecoFormSet(request.POST, instance=cliente)
+
+        if cliente_form.is_valid() and telefone_formset.is_valid() and endereco_formset.is_valid():
+            cliente_form.save()
+            telefone_formset.save()
+            endereco_formset.save()
             return redirect('listar_clientes')
+    
     else:
-        form = ClienteForm(instance=cliente)
-    return render(request, 'editar_cliente.html', {'form': form, 'cliente': cliente})
+        cliente_form = ClienteForm(instance=cliente)
+        telefone_formset = TelefoneFormSet(instance=cliente)
+        endereco_formset = EnderecoFormSet(instance=cliente)
+    
+    return render(request, 'editar_cliente.html', {
+        'cliente_form': cliente_form,
+        'telefone_formset': telefone_formset,
+        'endereco_formset': endereco_formset
+    })
 
 def editar_pedido(request, pk):
     pedido = get_object_or_404(PedidoImpressao, pk=pk)

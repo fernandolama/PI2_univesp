@@ -17,9 +17,9 @@
         <td>{{ cliente.email }}</td>
         <td>{{ cliente.telefone }}</td>
         <td><a href="{% url 'editar_cliente' cliente.pk %}">Editar</a></td>
-        <td><a href="{% url 'excluir_cliente' cliente.pk %}">Excluir</a></td>
+        <td><a href="{% url 'excluir_cliente' cliente.pk %}"onclick="return confirm('Tem certeza que deseja excluir este cliente?');">Excluir</a></tr>td></td>
     </tr>
     {% endfor %}
 </table>
-<a href="{% url 'cadastrar_cliente' %}">Cadastrar Novo Cliente</a>
+<a href="{% url 'novo_cliente' %}">Cadastrar Novo Cliente</a>
 {% endblock %}
