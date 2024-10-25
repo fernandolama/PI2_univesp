@@ -1,5 +1,6 @@
 from django import forms
-from .models import ItemPedido, TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente, Endereco, Telefone
+from django.forms import inlineformset_factory
+from .models import Endereco, Telefone, Cliente, TamanhoFoto, PedidoImpressao, OrcamentoEvento, ItemPedido, RecursoEvento
 
 class TamanhoFotoForm(forms.ModelForm):
     class Meta:
@@ -29,7 +30,7 @@ class PedidoImpressaoForm(forms.ModelForm):
     tamanho_foto = forms.ModelChoiceField(
         queryset=TamanhoFoto.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}),
-        label="Tamanho da Foto"
+        label="Selecione o tamanho da foto"
     )
     quantidade = forms.IntegerField(
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantidade'}),
@@ -92,9 +93,12 @@ class ClienteForm(forms.ModelForm):
 class EnderecoForm(forms.ModelForm):
     class Meta:
         model = Endereco
-        fields = [ 'rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado']
+        fields = ['cliente', 'rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado']
 
 class TelefoneForm(forms.ModelForm):
     class Meta:
         model = Telefone
         fields = ['cliente', 'codigo_area', 'numero']
+
+TelefoneFormSet = inlineformset_factory(Cliente, Telefone, fields=('codigo_area', 'numero'), extra=1, can_delete=True)
+EnderecoFormSet = inlineformset_factory(Cliente, Endereco, fields=('rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado'), extra=1, can_delete=True)
