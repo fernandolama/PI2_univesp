@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,  get_object_or_404
-from .forms import ItemPedidoForm, TamanhoFotoForm, PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm
+from .forms import ItemPedidoForm, TamanhoFotoForm, PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm, EnderecoForm, TelefoneFormSet, EnderecoFormSet
 from .models import ItemPedido, TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente
 
 def homepage(request):
@@ -52,23 +52,54 @@ def novo_recurso(request):
 
 def novo_orcamento(request):
     if request.method == 'POST':
-        form = OrcamentoEventoForm(request.POST)
-        if form.is_valid():
-            form.save()
+        orcamento_form = OrcamentoEventoForm(request.POST)
+        endereco_form = EnderecoForm(request.POST) if 'Outro' in request.POST.get('local_evento', '') else None
+
+        if orcamento_form.is_valid() and (not endereco_form or endereco_form.is_valid()):
+            orcamento = orcamento_form.save(commit=False)
+            
+            if endereco_form:
+                # Salva o novo endereço
+                novo_endereco = endereco_form.save()
+                orcamento.local_evento = novo_endereco
+            
+            orcamento.save()
+            orcamento_form.save_m2m()  # Salva relações Many-to-Many, como recursos adicionais
+
             return redirect('listar_orcamentos')
+
     else:
-        form = OrcamentoEventoForm()
-    return render(request, 'novo_orcamento.html', {'form': form})
+        orcamento_form = OrcamentoEventoForm()
+        endereco_form = EnderecoForm()
+
+    return render(request, 'novo_orcamento.html', {
+        'orcamento_form': orcamento_form,
+        'endereco_form': endereco_form
+    })
 
 def novo_cliente(request):
     if request.method == 'POST':
-        form = ClienteForm(request.POST)
-        if form.is_valid():
-            form.save()
+        cliente_form = ClienteForm(request.POST)
+        telefone_formset = TelefoneFormSet(request.POST)
+        endereco_formset = EnderecoFormSet(request.POST)
+        
+        if cliente_form.is_valid() and telefone_formset.is_valid() and endereco_formset.is_valid():
+            cliente = cliente_form.save()
+            telefone_formset.instance = cliente
+            telefone_formset.save()
+            endereco_formset.instance = cliente
+            endereco_formset.save()
             return redirect('listar_clientes')
+    
     else:
-        form = ClienteForm()
-    return render(request, 'cadastrar_cliente.html', {'form': form})
+        cliente_form = ClienteForm()
+        telefone_formset = TelefoneFormSet()
+        endereco_formset = EnderecoFormSet()
+    return render(request, 'novo_cliente.html', {
+        'cliente_form': cliente_form,
+        'telefone_formset': telefone_formset,
+        'endereco_formset': endereco_formset
+    })
 
 # Read
 
@@ -127,14 +158,32 @@ def editar_tamanho(request, pk):
 
 def editar_orcamento(request, pk):
     orcamento = get_object_or_404(OrcamentoEvento, pk=pk)
+    
     if request.method == 'POST':
-        form = OrcamentoEventoForm(request.POST, instance=orcamento)
-        if form.is_valid():
-            form.save()
+        orcamento_form = OrcamentoEventoForm(request.POST, instance=orcamento)
+        endereco_form = EnderecoForm(request.POST) if 'Outro' in request.POST.get('local_evento', '') else None
+        
+        if orcamento_form.is_valid() and (not endereco_form or endereco_form.is_valid()):
+            orcamento = orcamento_form.save(commit=False)
+
+            if endereco_form:
+                # Salva o endereço
+                novo_endereco = endereco_form.save()
+                orcamento.local_evento = novo_endereco
+
+            orcamento.save()
+            orcamento_form.save_m2m()
+            
             return redirect('listar_orcamentos')
+    
     else:
-        form = OrcamentoEventoForm(instance=orcamento)
-    return render(request, 'editar_orcamento.html', {'form': form, 'orcamento': orcamento})
+        orcamento_form = OrcamentoEventoForm(instance=orcamento)
+        endereco_form = EnderecoForm() if not orcamento or orcamento.local_evento is None else None
+    
+    return render(request, 'editar_orcamento.html', {
+        'orcamento_form': orcamento_form,
+        'endereco_form': endereco_form
+    })
 
 def editar_recurso(request, pk):
     recurso = get_object_or_404(RecursoEvento, pk=pk)
@@ -149,14 +198,28 @@ def editar_recurso(request, pk):
 
 def editar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
+    
     if request.method == 'POST':
-        form = ClienteForm(request.POST, instance=cliente)
-        if form.is_valid():
-            form.save()
+        cliente_form = ClienteForm(request.POST, instance=cliente)
+        telefone_formset = TelefoneFormSet(request.POST, instance=cliente)
+        endereco_formset = EnderecoFormSet(request.POST, instance=cliente)
+
+        if cliente_form.is_valid() and telefone_formset.is_valid() and endereco_formset.is_valid():
+            cliente_form.save()
+            telefone_formset.save()
+            endereco_formset.save()
             return redirect('listar_clientes')
+    
     else:
-        form = ClienteForm(instance=cliente)
-    return render(request, 'editar_cliente.html', {'form': form, 'cliente': cliente})
+        cliente_form = ClienteForm(instance=cliente)
+        telefone_formset = TelefoneFormSet(instance=cliente)
+        endereco_formset = EnderecoFormSet(instance=cliente)
+    
+    return render(request, 'editar_cliente.html', {
+        'cliente_form': cliente_form,
+        'telefone_formset': telefone_formset,
+        'endereco_formset': endereco_formset
+    })
 
 def editar_pedido(request, pk):
     pedido = get_object_or_404(PedidoImpressao, pk=pk)

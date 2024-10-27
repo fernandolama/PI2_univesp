@@ -94,6 +94,7 @@ class OrcamentoEvento(BaseModel):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="eventos")
     tipo_evento = models.ForeignKey(TipoEvento, on_delete=models.CASCADE, related_name="orcamentos")
     data_evento = models.DateField()
+    hora_evento = models.TimeField()
     local_evento = models.ForeignKey(Endereco, on_delete=models.CASCADE, related_name="eventos")
     recursos_adicionais = models.ManyToManyField(RecursoEvento, related_name="orcamentos", blank=True)
     outros_detalhes = models.CharField(max_length=500, blank=True, null=True)

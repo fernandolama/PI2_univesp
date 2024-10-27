@@ -5,11 +5,33 @@
 {% block content %}
 <h2>Novo Orçamento de Evento</h2>
 
-<form method="POST">
+<form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar Orçamento</button>
+    {{ orcamento_form.as_p }}
+
+    <div id="endereco-form" {% if not endereco_form %}style="display: none;"{% endif %}>
+        <h4>Novo Endereço</h4>
+        {{ endereco_form.as_p }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar Orçamento</button>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const localEventoField = document.querySelector('#id_local_evento');
+        const enderecoForm = document.querySelector('#endereco-form');
+        
+        localEventoField.addEventListener('change', function() {
+            if (this.value === 'Outro') {
+                enderecoForm.style.display = 'block';
+            } else {
+                enderecoForm.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 
 <a href="{% url 'listar_orcamentos' %}">Voltar para Lista de Orçamentos</a>
 {% endblock %}
