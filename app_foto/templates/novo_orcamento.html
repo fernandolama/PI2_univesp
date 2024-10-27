@@ -1,37 +1,45 @@
 {% extends 'base.html' %}
 
-{% block title %}Página Inicial{% endblock %}
+{% block title %}Novo Orçamento{% endblock %}
 
 {% block content %}
-<h2>Novo Orçamento de Evento</h2>
-
+<h2>Criar Novo Orçamento</h2>
 <form method="post">
     {% csrf_token %}
     {{ orcamento_form.as_p }}
-
-    <div id="endereco-form" {% if not endereco_form %}style="display: none;"{% endif %}>
-        <h4>Novo Endereço</h4>
-        {{ endereco_form.as_p }}
+    
+    <div class="form-group">
+        <label for="id_cliente">Cliente:</label>
+        {{ orcamento_form.cliente }}
+    </div>
+    
+    <div class="form-group">
+        <label for="id_local_evento">Local do Evento:</label>
+        <select name="local_evento" id="id_local_evento">
+            <option value="">Selecione um endereço</option>
+        </select>
     </div>
 
-    <button type="submit" class="btn btn-primary">Salvar Orçamento</button>
-</form>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const localEventoField = document.querySelector('#id_local_evento');
-        const enderecoForm = document.querySelector('#endereco-form');
-        
-        localEventoField.addEventListener('change', function() {
-            if (this.value === 'Outro') {
-                enderecoForm.style.display = 'block';
-            } else {
-                enderecoForm.style.display = 'none';
-            }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#id_cliente').change(function() {
+            var clienteId = $(this).val();
+            $.ajax({
+                url: '{% url "buscar_endereco" "0" %}'.replace("0", clienteId),  // URL do endpoint que busca endereços
+                method: 'GET',
+                success: function(data) {
+                    var select = $('#id_local_evento');
+                    select.empty();
+                    select.append('<option value="">Selecione um endereço</option>');
+                    $.each(data, function(index, endereco) {
+                        select.append('<option value="' + endereco.id + '">' + endereco.logradouro + ', ' + endereco.numero + ' - ' + endereco.bairro + ', ' + endereco.cidade + '</option>');
+                    });
+                }
+            });
         });
     });
-</script>
-
+    </script>
 
 <a href="{% url 'listar_orcamentos' %}">Voltar para Lista de Orçamentos</a>
 {% endblock %}

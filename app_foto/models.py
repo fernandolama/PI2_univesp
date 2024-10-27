@@ -13,7 +13,6 @@ class BaseModel(models.Model):
 class Cliente(BaseModel):
     nome = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    data_nascimento = models.DateField()
     
     def __str__(self):
         return f'{self.nome}'
@@ -22,11 +21,11 @@ class Telefone(BaseModel):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='telefones')
     codigo_area = models.IntegerField(
         validators=[MinValueValidator(10), MaxValueValidator(99)],
-         help_text="Informe o código de área com dois dígitos (ex: 11 para São Paulo)"    
+        blank=True, null=True     
     )
     numero = models.IntegerField(
         validators=[MinValueValidator(10000000), MaxValueValidator(999999999)],
-        help_text="Informe o número de telefone sem o código de área"
+        blank=True, null=True
     )
 
     def __str__(self):
@@ -35,7 +34,7 @@ class Telefone(BaseModel):
 
 class Endereco(BaseModel):
     cliente = models.OneToOneField(Cliente, on_delete=models.CASCADE, related_name='enderecos')
-    rua = models.CharField(max_length=100)
+    logradouro = models.CharField(max_length=100)
     numero = models.CharField(max_length=8)
     complemento = models.CharField(max_length=100, blank=True, null=True)
     bairro = models.CharField(max_length=100)
@@ -45,7 +44,7 @@ class Endereco(BaseModel):
 
     def __str__(self):
         complemento_str = f' - {self.complemento}\n' if self.complemento else ''
-        return f'{self.cliente.nome} - {self.rua}, {self.numero}\n{complemento_str}{self.bairro} {self.cep}\n{self.cidade}-{self.estado}'
+        return f'{self.cliente.nome} - {self.logradouro}, {self.numero}\n{complemento_str}{self.bairro} {self.cep}\n{self.cidade}-{self.estado}'
     
 class TamanhoFoto(BaseModel):
     medidas = models.CharField(max_length=20, unique=True)

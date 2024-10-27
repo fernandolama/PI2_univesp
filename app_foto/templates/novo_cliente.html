@@ -1,13 +1,38 @@
 {% extends 'base.html' %}
 
-{% block title %}Cadastro de Cliente{% endblock %}
+{% block title %}Novo Cliente{% endblock %}
 
 {% block content %}
-<h2>Cadastro de Cliente</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Cadastrar Cliente</button>
-</form>
-{% endblock %}
+<div class="container mt-5">
+    <h2>Cadastrar Novo Cliente</h2>
+    <form method="POST" action=".">
+        {% csrf_token %}
+        
+        <fieldset>
+            <legend>Dados do Cliente</legend>
+            {{ cliente_form.as_p }}
+        </fieldset>
 
+        <fieldset>
+            <legend>Telefones</legend>
+            {{ telefone_formset.management_form }}
+            {% for form in telefone_formset %}
+                {{ form.as_p }}
+            {% endfor %}
+        </fieldset>
+    
+        <fieldset>
+            <legend>Endereço</legend>
+            {{ endereco_formset.management_form }}
+            {% for form in endereco_formset %}
+                {{ form.as_p }}
+            {% endfor %}
+        </fieldset>
+
+        <!-- Botão para Enviar -->
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

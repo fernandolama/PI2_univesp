@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect,  get_object_or_404
 from .forms import ItemPedidoForm, TamanhoFotoForm, PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm, EnderecoForm, TelefoneFormSet, EnderecoFormSet
 from .models import ItemPedido, TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente
@@ -49,6 +50,12 @@ def novo_recurso(request):
     else:
         form = RecursoEventoForm()
     return render(request, 'novo_recurso.html', {'form': form})
+
+def buscar_endereco(request, cliente_id):
+    cliente = get_object_or_404(Cliente, pk=cliente_id)
+    endereco = cliente.endereco_set.all().values('id', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'estado')
+    
+    return JsonResponse(list(endereco), safe=False)
 
 def novo_orcamento(request):
     if request.method == 'POST':

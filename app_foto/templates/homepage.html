@@ -8,12 +8,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Homepage - Plataforma de Fotos</title>
+        <title>Homepage - Plataforma "Diga Xis!" para gerenciamento de serviços fotográficos</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     
     <div class="container">
-        <h1 class="my-4 text-center">Bem-vindo à Plataforma de Fotos</h1>
+        <h1 class="my-4 text-center">Bem-vindo à Plataforma "Diga Xis!"</h1>
     
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
             <div class="container-fluid">
@@ -23,30 +23,52 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'listar_clientes' %}">Clientes</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Gerenciamento de Clientes
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                                <!-- Clientes -->
+                                <li><a class="dropdown-item" href="{% url 'listar_clientes' %}">Listar Clientes</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'novo_cliente' %}">Cadastrar Novo Cliente</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'cadastrar_cliente' %}">Cadastrar Cliente</a>
+                    </ul>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Gerenciamento de Pedidos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                                <!-- Pedidos -->
+                                <li><a class="dropdown-item" href="{% url 'listar_pedidos' %}">Listar Pedidos</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'novo_pedido' %}">Registrar Pedido de Impressão</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'listar_servicos' %}">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'novo_servico' %}">Cadastrar Serviço</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'listar_orcamentos' %}">Orçamentos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'novo_orcamento' %}">Novo Orçamento</a>
+                    </ul>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Gerenciamento de Orçamentos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                                <!-- Orçamentos -->
+                                <li><a class="dropdown-item" href="{% url 'listar_orcamentos' %}">Listar Orçamentos</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'novo_orcamento' %}">Elaborar Novo Orçamento</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     
-       
     </div>
     
     <!-- Bootstrap JS -->
@@ -54,4 +76,3 @@
     
 </html>
 {% endblock %}
-
