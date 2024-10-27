@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Endereco, Telefone, Cliente, TamanhoFoto, PedidoImpressao, OrcamentoEvento, ItemPedido, RecursoEvento
+from .models import Endereco, Telefone, Cliente, TamanhoFoto, PedidoImpressao, OrcamentoEvento, ItemPedido, RecursoEvento, TipoEvento
 
 class TamanhoFotoForm(forms.ModelForm):
     class Meta:
@@ -73,7 +73,23 @@ class OrcamentoEventoForm(forms.ModelForm):
         model = OrcamentoEvento
         fields = ['cliente', 'tipo_evento', 'data_evento', 'hora_evento', 'local_evento', 'recursos_adicionais' , 'outros_detalhes']
 
-    local_evento = forms.ModelChoiceField(queryset=Endereco.objects.all(), required=False, label="Local do Evento")
+    cliente = forms.ModelChoiceField(
+        queryset=Cliente.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Cliente"
+    )
+    tipo_evento = forms.ModelChoiceField(
+        queryset=TipoEvento.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Tipo de Evento"
+    )
+    local_evento = forms.ModelChoiceField(
+        queryset=Endereco.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Local do Evento",
+        empty_label="Escolha um endereço ou selecione 'Outro' para adicionar um novo "
+    )
     recursos_adicionais = forms.ModelMultipleChoiceField(
         queryset=RecursoEvento.objects.all(),
         widget=forms.CheckboxSelectMultiple,
@@ -85,6 +101,11 @@ class OrcamentoEventoForm(forms.ModelForm):
         required=False
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Adiciona a opção "Outro" ao local_evento
+        self.fields['local_evento'].choices = list(self.fields['local_evento'].choices) + [("Outro", "Outro")]
+
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
@@ -93,7 +114,17 @@ class ClienteForm(forms.ModelForm):
 class EnderecoForm(forms.ModelForm):
     class Meta:
         model = Endereco
-        fields = ['cliente', 'rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado']
+        fields = ['rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado']
+        widgets = {
+            'rua': forms.TextInput(attrs={'class': 'form-control'}),
+            'numero': forms.TextInput(attrs={'class': 'form-control'}),
+            'complemento': forms.TextInput(attrs={'class': 'form-control'}),
+            'bairro': forms.TextInput(attrs={'class': 'form-control'}),
+            'cep': forms.TextInput(attrs={'class': 'form-control'}),
+            'cidade': forms.TextInput(attrs={'class': 'form-control'}),
+            'estado': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
 
 class TelefoneForm(forms.ModelForm):
     class Meta:
@@ -102,10 +133,3 @@ class TelefoneForm(forms.ModelForm):
 
 TelefoneFormSet = inlineformset_factory(Cliente, Telefone, fields=('codigo_area', 'numero'), extra=1, can_delete=True)
 EnderecoFormSet = inlineformset_factory(Cliente, Endereco, fields=('rua', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado'), extra=1, can_delete=True)
-RecursoEventoFormSet = inlineformset_factory(
-    OrcamentoEvento,
-    RecursoEvento,
-    fields=('nome', 'preco'),
-    extra=1,
-    can_delete=True,
-)
