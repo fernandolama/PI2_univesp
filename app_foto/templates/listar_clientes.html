@@ -36,7 +36,6 @@
             <td>
                 <a href="{% url 'editar_cliente' cliente.pk %}" class="button-link">Editar</a>
                 <a href="{% url 'excluir_cliente' cliente.pk %}" class="button-link button-link-danger" onclick="return confirm('Tem certeza?')">Excluir</a>
-
             </td>
         </tr>
         {% endfor %}

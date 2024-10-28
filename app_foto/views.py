@@ -68,7 +68,7 @@ def novo_orcamento(request):
                 orcamento.local_evento = novo_endereco
             
             orcamento.save()
-            orcamento_form.save_m2m()  # Salva relações Many-to-Many, como recursos adicionais
+            orcamento_form.save_m2m()  # Salva relações Many-to-Many, com os recursos adicionais
 
             return redirect('listar_orcamentos')
 
@@ -158,7 +158,6 @@ def editar_orcamento(request, pk):
             orcamento = orcamento_form.save(commit=False)
 
             if endereco_form:
-                # Salva o endereço
                 novo_endereco = endereco_form.save()
                 orcamento.local_evento = novo_endereco
 

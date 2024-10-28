@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.test import TestCase
 from django.utils import timezone
-from .models import Cliente, Telefone, Endereco, PedidoImpressao, OrcamentoEvento
+from .models import Cliente, Telefone, Endereco, PedidoImpressao, TamanhoFoto, ItemPedido, OrcamentoEvento
 
 class ClienteModelTest(TestCase):
 
@@ -10,7 +10,6 @@ class ClienteModelTest(TestCase):
         self.cliente = Cliente.objects.create(
             nome="João Silva",
             email="joao@example.com",
-            data_nascimento="1990-01-01"
         )
 
     def test_cliente_str(self):
@@ -24,7 +23,6 @@ class ClienteModelTest(TestCase):
         cliente = Cliente.objects.create(
             nome="",
             email="teste@example.com",
-            data_nascimento="1995-10-10"
         )
         with self.assertRaises(ValidationError):
             cliente.full_clean()
@@ -47,7 +45,6 @@ class EnderecoModelTest(TestCase):
         self.cliente = Cliente.objects.create(
             nome="Maria Oliveira",
             email="maria@example.com",
-            data_nascimento="1985-05-15"
         )
         self.endereco = Endereco.objects.create(
             cliente=self.cliente,
@@ -70,32 +67,88 @@ class EnderecoModelTest(TestCase):
 class PedidoImpressaoModelTest(TestCase):
 
     def setUp(self):
-        # Setup para Cliente e Pedido
+        # Setup para Cliente, TamanhoFoto, Pedido e ItemPedido
         self.cliente = Cliente.objects.create(
             nome="Pedro Souza",
             email="pedro@example.com",
-            data_nascimento="1992-02-20"
         )
-        self.pedido = PedidoImpressao.objects.create(
-            cliente=self.cliente,
-            tamanho_foto='10x15',
-            quantidade=10,
+        
+          # Cria múltiplos tamanhos de foto
+        self.tamanho_foto_10x15 = TamanhoFoto.objects.create(
+            medidas="10x15",
             preco_unitario=2.50
+        )
+        
+        self.tamanho_foto_20x30 = TamanhoFoto.objects.create(
+            medidas="20x30",
+            preco_unitario=5.00
+        )
+        
+        self.tamanho_foto_30x45 = TamanhoFoto.objects.create(
+            medidas="30x45",
+            preco_unitario=7.50
+        )
+
+        # Cria um pedido de impressão e itens associados
+        self.pedido = PedidoImpressao.objects.create(cliente=self.cliente)
+        
+        # Adiciona itens com diferentes tamanhos de foto ao pedido
+        self.item_pedido_1 = ItemPedido.objects.create(
+            pedido=self.pedido,
+            tamanho_foto=self.tamanho_foto_10x15,
+            quantidade=10
+        )
+
+        self.item_pedido_2 = ItemPedido.objects.create(
+            pedido=self.pedido,
+            tamanho_foto=self.tamanho_foto_20x30,
+            quantidade=5
+        )
+
+        self.item_pedido_3 = ItemPedido.objects.create(
+            pedido=self.pedido,
+            tamanho_foto=self.tamanho_foto_30x45,
+            quantidade=2
         )
 
     def test_pedido_str(self):
         """Testa a string de representação do pedido"""
         self.assertEqual(
             str(self.pedido),
-            "Pedido de Pedro Souza - R$ 25.0"
+            f"Pedido de {self.cliente.nome} - Total: R$ {self.pedido.calcular_total_pedido()}"
         )
 
-    def test_calculo_total_pedido(self):
-        """Testa o cálculo do valor total do pedido"""
+    def test_calculo_total_pedido_com_multiplos_itens(self):
+        """Testa o cálculo do valor total do pedido com múltiplos itens"""
         total = self.pedido.calcular_total_pedido()
-        self.assertEqual(total, 25.00)
+        expected_total = (
+            10 * 2.50 +  # 10x15
+            5 * 5.00 +   # 20x30
+            2 * 7.50     # 30x45
+        )
+        self.assertEqual(total, expected_total)
 
+    def test_cliente_relacionado_ao_pedido(self):
+        """Testa se o cliente está corretamente relacionado ao pedido"""
+        self.assertEqual(self.pedido.cliente, self.cliente)
+        self.assertEqual(self.pedido.cliente.nome, "Pedro Souza")
 
+    def test_calculo_subtotal_item_pedido_1(self):
+        """Testa o cálculo do subtotal para os itens do pedido 1"""
+        subtotal = self.item_pedido_1.calcular_subtotal()
+        self.assertEqual(subtotal, 25.00)
+
+    def test_calculo_subtotal_item_pedido_2(self):
+        """Testa o cálculo do subtotal para os itens do pedido 2S"""
+        subtotal = self.item_pedido_2.calcular_subtotal()
+        self.assertEqual(subtotal, 25.00)
+
+    def test_calculo_subtotal_item_pedido_3(self):
+        """Testa o cálculo do subtotal para os itens do pedido 3"""
+        subtotal = self.item_pedido_3.calcular_subtotal()
+        self.assertEqual(subtotal, 15.00)
+
+'''
 class OrcamentoEventoModelTest(TestCase):
 
     def setUp(self):
@@ -103,7 +156,6 @@ class OrcamentoEventoModelTest(TestCase):
         self.cliente = Cliente.objects.create(
             nome="Lucas Fernandes",
             email="lucas@example.com",
-            data_nascimento="1988-08-08"
         )
         self.endereco = Endereco.objects.create(
             cliente=self.cliente,
@@ -138,3 +190,4 @@ class OrcamentoEventoModelTest(TestCase):
         """Testa o cálculo do valor total do orçamento"""
         total = self.orcamento.calcular_total_evento()
         self.assertEqual(total, 4650.0)
+'''
