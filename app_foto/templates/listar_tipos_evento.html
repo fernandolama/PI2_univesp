@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Lista de Tipos de Evento{% endblock %}
+{% block content %}
+<h2>Tipos de Evento Cadastrados</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tipo in tipos %}
+        <tr>
+            <td>{{ tipo.nome }}</td>
+            <td>R$ {{ tipo.preco }}</td>
+            <td>
+                <a href="{% url 'editar_tipo_evento' tipo.pk %}" class="button-link">Editar</a>
+                <a href="{% url 'excluir_tamanho_foto' tipo.pk %}" class="button-link button-link-danger" onclick="return confirm('Tem certeza?')">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'novo_tipo_evento' %}" class="btn btn-custom">Cadastrar Novo Tipo de Evento</a>
+{% endblock %}

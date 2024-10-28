@@ -1,24 +1,33 @@
 {% extends 'base.html' %}
-
-{% block title %}Página Inicial{% endblock %}
-
+{% block title %}Lista de Pedidos de Impressão{% endblock %}
 {% block content %}
-<h2>Lista de Serviços</h2>
-<table>
-    <tr>
-        <th>Nome do Serviço</th>
-        <th>Descrição</th>
-        <th>Ações</th>
-    </tr>
-    {% for servico in servicos %}
-    <tr>
-        <td>{{ servico.nome }}</td>
-        <td>{{ servico.descricao }}</td>
-        <td><a href="{% url 'editar_servico' servico.pk %}">Editar</a></td>
-        <td><a href="{% url 'excluir_servico' servico.pk %}">Excluir</a></td>
-    </tr>
-    {% endfor %}
+<h2>Pedidos de Impressão</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Total do Pedido</th>
+            <th>Itens</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pedido in pedidos %}
+        <tr>
+            <td>{{ pedido.cliente.nome }}</td>
+            <td>R$ {{ pedido.calcular_total_pedido }}</td>
+            <td>
+                {% for item in pedido.itens.all %}
+                    {{ item.quantidade }} x {{ item.tamanho_foto.medidas }}<br>
+                {% endfor %}
+            </td>
+            <td>
+                <a href="{% url 'editar_pedido' pedido.pk %}" class="button-link">Editar</a>
+                <a href="{% url 'excluir_pedido' pedido.pk %}" onclick="return confirm('Tem certeza?');" class="button-link button-link-danger">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
-
-<a href="{% url 'novo_servico' %}">Novo Serviço</a>
+<a href="{% url 'novo_pedido' %}" class="btn btn-custom">Registrar Novo Pedido</a>
 {% endblock %}

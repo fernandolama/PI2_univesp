@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Lista de Tamanhos de Foto{% endblock %}
+{% block content %}
+<h2>Tamanhos de Foto Disponíveis</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Medidas</th>
+            <th>Preço Unitário</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tamanho in tamanhos %}
+        <tr>
+            <td>{{ tamanho.medidas }}</td>
+            <td>R$ {{ tamanho.preco_unitario }}</td>
+            <td>
+                <a href="{% url 'editar_tamanho_foto' tamanho.pk %}" class="button-link">Editar</a>
+                <a href="{% url 'excluir_tamanho_foto' tamanho.pk %}" class="button-link button-link-danger" onclick="return confirm('Tem certeza?')">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'novo_tamanho_foto' %}" class="btn btn-custom">Cadastrar Novo Tamanho de Foto</a>
+{% endblock %}

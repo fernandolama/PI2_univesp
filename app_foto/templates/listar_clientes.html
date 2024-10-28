@@ -34,12 +34,14 @@
                 {% endif %}
             </td>
             <td>
-                <a href="{% url 'editar_cliente' cliente.pk %}">Editar</a> |
-                <a href="{% url 'excluir_cliente' cliente.pk %}" onclick="return confirm('Tem certeza?')">Excluir</a>
+                <a href="{% url 'editar_cliente' cliente.pk %}" class="button-link">Editar</a>
+                <a href="{% url 'excluir_cliente' cliente.pk %}" class="button-link button-link-danger" onclick="return confirm('Tem certeza?')">Excluir</a>
+
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<a href="{% url 'novo_cliente' %}" class="btn btn-primary">Cadastrar Novo Cliente</a>
+<br>
+<a href="{% url 'novo_cliente' %}" class="btn btn-custom">Cadastrar Novo Cliente</a>
 {% endblock %}

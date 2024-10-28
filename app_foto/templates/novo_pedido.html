@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
-
-{% block title %}Página Inicial{% endblock %}
-
+{% block title %}Novo Pedido de Impressão{% endblock %}
 {% block content %}
-<h2>Novo Pedido</h2>
+<h2>Criar Novo Pedido de Impressão</h2>
 <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Fazer Pedido</button>
+    <div class="mb-3">
+        {{ pedido_form.as_p }}
+    </div>
+    <h3>Itens do Pedido</h3>
+    {{ item_formset.management_form }}
+    {% for form in item_formset %}
+        <div class="card mb-3">
+            <div class="card-body">
+                {{ form.as_p }}
+                {% if form.instance.pk %}
+                    <a href="#" class="btn btn-danger" onclick="return confirm('Excluir este item?');">Excluir</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Salvar Pedido</button>
 </form>
+<br>
+<a href="{% url 'listar_pedidos' %}", class="btn btn-custom">Voltar para Lista de Pedidos</a>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect,  get_object_or_404
-from .forms import ItemPedidoForm, TamanhoFotoForm, PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm, EnderecoForm, TelefoneFormSet, EnderecoFormSet
+from .forms import ItemPedidoForm, TamanhoFotoForm, PedidoImpressaoForm, RecursoEventoForm, OrcamentoEventoForm, ClienteForm, EnderecoForm, TelefoneFormSet, EnderecoFormSet, ItemPedidoFormSet
 from .models import ItemPedido, TamanhoFoto, PedidoImpressao, RecursoEvento, OrcamentoEvento, Cliente
 
 def homepage(request):
@@ -8,38 +8,35 @@ def homepage(request):
 
 # Create
 
-def adicionar_item_pedido(request, pedido_id):
-    pedido = get_object_or_404(PedidoImpressao, id=pedido_id)
-    if request.method == 'POST':
-        form = ItemPedidoForm(request.POST)
-        if form.is_valid():
-            item_pedido = form.save(commit=False)
-            item_pedido.pedido = pedido
-            item_pedido.save()
-            return redirect('ver_pedido', pedido_id=pedido.id)
-    else:
-        form = ItemPedidoForm()
-    return render(request, 'adicionar_item_pedido.html', {'form': form, 'pedido': pedido})
-
-def novo_tamanho(request):
+def novo_tamanho_foto(request):
     if request.method == 'POST':
         form = TamanhoFotoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('listar_tamanhos')
+            return redirect('listar_tamanhos_foto')
     else:
         form = TamanhoFotoForm()
-    return render(request, 'novo_tamanho.html', {'form': form})
+    return render(request, 'novo_tamanho_foto.html', {'form': form})
 
 def novo_pedido(request):
     if request.method == 'POST':
-        form = PedidoImpressaoForm(request.POST)
-        if form.is_valid():
-            form.save()
+        pedido_form = PedidoImpressaoForm(request.POST)
+        item_formset = ItemPedidoFormSet(request.POST)
+
+        if pedido_form.is_valid() and item_formset.is_valid():
+            pedido = pedido_form.save()
+            item_formset.instance = pedido
+            item_formset.save()
             return redirect('listar_pedidos')
+
     else:
-        form = PedidoImpressaoForm()
-    return render(request, 'novo_pedido.html', {'form': form})
+        pedido_form = PedidoImpressaoForm()
+        item_formset = ItemPedidoFormSet()
+
+    return render(request, 'novo_pedido.html', {
+        'pedido_form': pedido_form,
+        'item_formset': item_formset,
+    })
 
 def novo_recurso(request):
     if request.method == 'POST':
@@ -110,15 +107,9 @@ def novo_cliente(request):
 
 # Read
 
-def ver_pedido(request, pedido_id):
-    pedido = get_object_or_404(PedidoImpressao, id=pedido_id)
-    itens = pedido.itens.all()
-    total = pedido.calcular_total_pedido()
-    return render(request, 'ver_pedido.html', {'pedido': pedido, 'itens': itens, 'total': total})
-
-def listar_tamanhos(request):
+def listar_tamanhos_foto(request):
     tamanhos = TamanhoFoto.objects.all()
-    return render(request, 'listar_tamanhos.html', {'tamanhos': tamanhos})
+    return render(request, 'listar_tamanhos_foto.html', {'tamanhos': tamanhos})
 
 def listar_recursos(request):
     recursos = RecursoEvento.objects.all()
@@ -138,30 +129,23 @@ def listar_pedidos(request):
 
 # Update
 
-def editar_item_pedido(request, pedido_id, item_id):
-    pedido = get_object_or_404(PedidoImpressao, id=pedido_id)
-    item = get_object_or_404(ItemPedido, id=item_id, pedido=pedido)
-
+def editar_tamanho_foto(request, pk):
+    tamanho_foto = get_object_or_404(TamanhoFoto, pk=pk)
+    
     if request.method == 'POST':
-        form = ItemPedidoForm(request.POST, instance=item)
+        form = TamanhoFotoForm(request.POST, instance=tamanho_foto)
+        
         if form.is_valid():
             form.save()
-            return redirect('ver_pedido', pedido_id=pedido.id)
+            return redirect('listar_tamanhos_foto')
+    
     else:
-        form = ItemPedidoForm(instance=item)
+        form = TamanhoFotoForm(instance=tamanho_foto)
 
-    return render(request, 'editar_item_pedido.html', {'form': form, 'pedido': pedido, 'item': item})
-
-def editar_tamanho(request, pk):
-    tamanho = get_object_or_404(TamanhoFoto, pk=pk)
-    if request.method == 'POST':
-        form = TamanhoFotoForm(request.POST, instance=tamanho)
-        if form.is_valid():
-            form.save()
-            return redirect('listar_tamanhos')
-    else:
-        form = OrcamentoEventoForm(instance=tamanho)
-    return render(request, 'editar_tamanho.html', {'form': form, 'tamanho': tamanho})
+    return render(request, 'editar_tamanho_foto.html', {
+        'form': form,
+        'tamanho_foto': tamanho_foto,
+    })
 
 def editar_orcamento(request, pk):
     orcamento = get_object_or_404(OrcamentoEvento, pk=pk)
@@ -230,32 +214,33 @@ def editar_cliente(request, pk):
 
 def editar_pedido(request, pk):
     pedido = get_object_or_404(PedidoImpressao, pk=pk)
+    
     if request.method == 'POST':
-        form = PedidoImpressaoForm(request.POST, instance=pedido)
-        if form.is_valid():
-            form.save()
+        pedido_form = PedidoImpressaoForm(request.POST, instance=pedido)
+        formset = ItemPedidoFormSet(request.POST, instance=pedido)
+        
+        if pedido_form.is_valid() and formset.is_valid():
+            pedido_form.save()
+            formset.save()
             return redirect('listar_pedidos')
+    
     else:
-        form = PedidoImpressaoForm(instance=pedido)
-    return render(request, 'editar_pedido.html', {'form': form, 'cliente': pedido})
+        pedido_form = PedidoImpressaoForm(instance=pedido)
+        formset = ItemPedidoFormSet(instance=pedido)
+
+    return render(request, 'editar_pedido.html', {
+        'pedido_form': pedido_form,
+        'formset': formset
+    })
 
 # Delete
 
-def excluir_item_pedido(request, pedido_id, item_id):
-    pedido = get_object_or_404(PedidoImpressao, id=pedido_id)
-    item = get_object_or_404(ItemPedido, id=item_id, pedido=pedido)
-
-    if request.method == 'POST':
-        item.delete()
-        return redirect('ver_pedido', pedido_id=pedido.id)
-    return render(request, 'confirmar_exclusao.html', {'objeto': item, 'tipo': 'Item'})
-
-def excluir_tamanho(request, pk):
+def excluir_tamanho_foto(request, pk):
     tamanho = get_object_or_404(TamanhoFoto, pk=pk)
     if request.method == 'POST':
         tamanho.delete()
-        return redirect('listar_tamanhos')
-    return render(request, 'confirmar_exclusao.html', {'objeto': tamanho, 'tipo': 'Tamanho'})
+        return redirect('listar_tamanhos_foto')
+    return render(request, 'confirmar_exclusao.html', {'objeto': tamanho, 'tipo': 'Tamanho de foto'})
 
 def excluir_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)

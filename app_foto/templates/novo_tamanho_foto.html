@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Novo Tamanho de Foto{% endblock %}
+{% block content %}
+<h2>Cadastrar Novo Tamanho de Foto</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+<br>
+<a href="{% url 'listar_tamanhos_foto' %}", class="btn btn-custom">Voltar para Lista de Tamanhos Cadastrados</a>
+{% endblock %}
