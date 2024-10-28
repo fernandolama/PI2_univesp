@@ -23,6 +23,8 @@ urlpatterns = [
     path('recursos/editar/<int:pk>/', views.editar_recurso, name='editar_recurso'),
     path('recursos/excluir/<int:pk>/', views.excluir_recurso, name='excluir_recurso'), 
 
+    # CRUD de Tipos de Eventos
+    
     # CRUD de Orçamentos
     path('buscar-endereco/<int:cliente_id>/', views.buscar_endereco, name='buscar_endereco'),
     path('orcamentos/novo/', views.novo_orcamento, name='novo_orcamento'),

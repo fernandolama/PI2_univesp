@@ -125,7 +125,7 @@ footer {
 
 /* Espaçamento vertical */
 .my-5 {
-    margin-top: 3rem !important; /* Espaçamento equivalente a 'my-5' no Bootstrap */
+    margin-top: 3rem !important;
     margin-bottom: 3rem !important;
 }
 
@@ -139,5 +139,5 @@ footer {
 }
 
 .card.shadow {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Efeito de sombra suave */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
