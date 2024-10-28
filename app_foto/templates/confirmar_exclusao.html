@@ -1,9 +1,21 @@
-<!-- confirmar_exclusao.html -->
-<h2>Tem certeza de que deseja excluir este {{ tipo }}?</h2>
-<p>{{ objeto }}</p>
+{% extends 'base.html' %}
 
-<form method="POST">
-    {% csrf_token %}
-    <button type="submit">Confirmar Exclusão</button>
-    <a href="javascript:history.back()">Cancelar</a>
-</form>
+{% block title %}Confirmação de Exclusão{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h2 class="text-danger">Tem certeza de que deseja excluir este {{ tipo }}?</h2>
+            <p class="lead">{{ objeto }}</p>
+            
+            <form method="POST" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="button-link button-link-danger">Confirmar Exclusão</button>
+            </form>
+            <br>
+            <a href="javascript:history.back()" class="btn btn-custom">Cancelar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

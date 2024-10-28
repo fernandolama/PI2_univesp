@@ -51,7 +51,7 @@ class EnderecoModelTest(TestCase):
         )
         self.endereco = Endereco.objects.create(
             cliente=self.cliente,
-            rua="Rua A",
+            logradouro="Rua A",
             numero="123",
             bairro="Centro",
             cep="12345678",
@@ -107,7 +107,7 @@ class OrcamentoEventoModelTest(TestCase):
         )
         self.endereco = Endereco.objects.create(
             cliente=self.cliente,
-            rua="Rua B",
+            logradouro="Rua B",
             numero="456",
             bairro="Jardins",
             cep="87654321",

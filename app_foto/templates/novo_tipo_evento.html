@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Novo Tipo de Evento{% endblock %}
+{% block content %}
+<h2>Cadastrar Novo Tipo de Evento</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+<br>
+<a href="{% url 'listar_tipos_evento' %}", class="btn btn-custom">Voltar para Lista de Tipos de Evento Cadastrados</a>
+{% endblock %}

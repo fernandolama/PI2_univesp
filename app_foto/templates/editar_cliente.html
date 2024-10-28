@@ -3,11 +3,32 @@
 {% block title %}Editar Cliente{% endblock %}
 
 {% block content %}
-<h2>Editar Cliente: {{ cliente.nome }}</h2>
-<form method="POST">
+<h2>Editar Cliente</h2>
+<form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar Alterações</button>
+    <fieldset>
+        <legend>Dados do Cliente</legend>
+        {{ cliente_form.as_p }}
+    </fieldset>
+
+    <fieldset>
+        <legend>Telefones</legend>
+        {{ telefone_formset.management_form }}
+        {% for form in telefone_formset %}
+            {{ form.as_p }}
+        {% endfor %}
+    </fieldset>
+
+    <fieldset>
+        <legend>Endereço</legend>
+        {{ endereco_formset.management_form }}
+        {% for form in endereco_formset %}
+            {{ form.as_p }}
+        {% endfor %}
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
 </form>
-<a href="{% url 'listar_clientes' %}">Voltar para Lista de Clientes</a>
+<br>
+<a href="{% url 'listar_clientes' %}" class="btn btn-custom">Voltar para Lista de Clientes</a>
 {% endblock %}
