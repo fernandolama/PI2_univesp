@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
@@ -107,7 +108,7 @@ class OrcamentoEvento(BaseModel):
     
     def calcular_total_evento(self):
         # Iniciar com o preço base do tipo de evento
-        total = self.tipo_evento.preco
+        total = Decimal(self.tipo_evento.preco)
 
         # Somar preços dos recursos adicionais
         for recurso in self.recursos_adicionais.all():

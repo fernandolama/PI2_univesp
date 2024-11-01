@@ -6,7 +6,7 @@ Protótipo de um Sistema ERP para a gestão dos serviços oferecidos por um fot�
 
 Membros do Grupo015:
 
-Fernanda
-Fernando
-Rogério
-Wilian
+Fernanda Sousa Melo Pereira  
+Fernando Araujo Del Lama  
+Rogerio Bortoni Silva  
+Wilian Fernando Moreira Felipe

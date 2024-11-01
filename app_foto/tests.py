@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.test import TestCase
-from django.utils import timezone
-from .models import Cliente, Telefone, Endereco, PedidoImpressao, TamanhoFoto, ItemPedido, OrcamentoEvento
+from .models import Cliente, Telefone, Endereco, PedidoImpressao, TamanhoFoto, ItemPedido, OrcamentoEvento, TipoEvento, RecursoEvento
+from datetime import time, date
 
 class ClienteModelTest(TestCase):
 
@@ -65,7 +65,6 @@ class EnderecoModelTest(TestCase):
 
 
 class PedidoImpressaoModelTest(TestCase):
-
     def setUp(self):
         # Setup para Cliente, TamanhoFoto, Pedido e ItemPedido
         self.cliente = Cliente.objects.create(
@@ -148,46 +147,59 @@ class PedidoImpressaoModelTest(TestCase):
         subtotal = self.item_pedido_3.calcular_subtotal()
         self.assertEqual(subtotal, 15.00)
 
-'''
-class OrcamentoEventoModelTest(TestCase):
-
+class TipoEventoModelTest(TestCase):
     def setUp(self):
-        # Setup para Cliente, Endereço e Orçamento
-        self.cliente = Cliente.objects.create(
-            nome="Lucas Fernandes",
-            email="lucas@example.com",
-        )
-        self.endereco = Endereco.objects.create(
-            cliente=self.cliente,
-            logradouro="Rua B",
-            numero="456",
-            bairro="Jardins",
-            cep="87654321",
-            cidade="Rio de Janeiro",
-            estado="RJ"
-        )
-        self.orcamento = OrcamentoEvento.objects.create(
-            cliente=self.cliente,
-            tipo_evento='casamento',
-            data_evento="2024-12-12",
-            local_evento=self.endereco,
-            apenas_foto=False,
-            foto_video=True,
-            registros_impressos=True,
-            apenas_digital=False,
-            acabamento_simples=False,
-            acabamento_especial=True,
-        )
+        self.tipo_evento = TipoEvento.objects.create(nome="Casamento", preco=3000.00)
 
-    def test_orcamento_str(self):
-        """Testa a string de representação do orçamento"""
+    def test_tipo_evento_str(self):
+        self.assertEqual(str(self.tipo_evento), "Casamento")
+
+    def test_tipo_evento_unique_name(self):
+        with self.assertRaises(Exception):
+            TipoEvento.objects.create(nome="Casamento", preco=1500.00)
+
+class RecursoEventoModelTest(TestCase):
+    def setUp(self):
+        self.recurso_evento = RecursoEvento.objects.create(nome="Foto+Vídeo", preco=1200.00)
+
+    def test_recurso_evento_str(self):
+        self.assertEqual(str(self.recurso_evento), "Foto+Vídeo")
+
+    def test_recurso_evento_unique_name(self):
+        with self.assertRaises(Exception):
+            RecursoEvento.objects.create(nome="Foto+Vídeo", preco=1000.00)
+
+class OrcamentoEventoModelTest(TestCase):
+    def setUp(self):
+        self.cliente = Cliente.objects.create(nome="João", email="joao@example.com")
+        self.tipo_evento = TipoEvento.objects.create(nome="Aniversário", preco=2000.00)
+        self.recurso_evento = RecursoEvento.objects.create(nome="Foto+Vídeo", preco=1000.00)
+        self.orcamento_evento = OrcamentoEvento.objects.create(
+            cliente=self.cliente,
+            tipo_evento=self.tipo_evento,
+            data_evento=date.today(),
+            hora_evento=time(18, 0),
+            local_evento="Salão de Festas",
+            logradouro="Rua dos Bobos",
+            numero="0",
+            bairro="Jardim",
+            cep="12345-678",
+            cidade="São Paulo",
+            estado="SP"
+        )
+        self.orcamento_evento.recursos_adicionais.add(self.recurso_evento)
+
+    def test_orcamento_evento_str(self):
         self.assertEqual(
-            str(self.orcamento),
-            "Orçamento para Casamento - Lucas Fernandes: R$ 4650.0"
+            str(self.orcamento_evento),
+            f"Orçamento para {self.tipo_evento} - {self.cliente}: R$ {self.orcamento_evento.calcular_total_evento()}"
         )
 
-    def test_calculo_total_evento(self):
-        """Testa o cálculo do valor total do orçamento"""
-        total = self.orcamento.calcular_total_evento()
-        self.assertEqual(total, 4650.0)
-'''
+    def test_calcular_total_evento(self):
+        total = self.orcamento_evento.calcular_total_evento()
+        self.assertEqual(total, 3000.00)  # 2000 (tipo_evento) + 1000 (recurso_evento)
+
+    def test_orcamento_evento_relations(self):
+        self.assertEqual(self.orcamento_evento.cliente.nome, "João")
+        self.assertEqual(self.orcamento_evento.tipo_evento.nome, "Aniversário")
+        self.assertIn(self.recurso_evento, self.orcamento_evento.recursos_adicionais.all())
