@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Lista de Recursos Personalizados{% endblock %}
+{% block content %}
+<h2>Recursos Personalizados Cadastrados</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for recurso in recursos %}
+        <tr>
+            <td>{{ recurso.nome }}</td>
+            <td>R$ {{ recurso.preco }}</td>
+            <td>
+                <a href="{% url 'editar_recurso' recurso.pk %}" class="button-link">Editar</a>
+                <a href="{% url 'excluir_recurso' recurso.pk %}" class="button-link button-link-danger" onclick="return confirm('Tem certeza?')">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<a href="{% url 'novo_recurso' %}" class="btn btn-custom">Cadastrar Novo Recurso Personalizado</a>
+{% endblock %}

@@ -38,7 +38,7 @@ class Endereco(BaseModel):
     numero = models.CharField(max_length=8)
     complemento = models.CharField(max_length=100, blank=True, null=True)
     bairro = models.CharField(max_length=100)
-    cep = models.CharField(max_length=8)
+    cep = models.CharField(max_length=9)
     cidade = models.CharField(max_length=50)
     estado = models.CharField(max_length=2)
 
@@ -77,14 +77,14 @@ class ItemPedido(BaseModel):
         
 class TipoEvento(BaseModel):
     nome = models.CharField(max_length=50, unique=True)
-    preco = models.DecimalField(max_digits=8, decimal_places=2, help_text="Preço para este tipo de evento")
+    preco = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
         return f"{self.nome}"
     
 class RecursoEvento(BaseModel):
-    nome = models.CharField(max_length=100, unique=True, help_text="Nome do recurso adicional")
-    preco = models.DecimalField(max_digits=8, decimal_places=2, help_text="Preço para este recurso")
+    nome = models.CharField(max_length=100, unique=True)
+    preco = models.DecimalField(max_digits=8, decimal_places=2)
     
     def __str__(self):
         return self.nome
@@ -94,7 +94,14 @@ class OrcamentoEvento(BaseModel):
     tipo_evento = models.ForeignKey(TipoEvento, on_delete=models.CASCADE, related_name="orcamentos")
     data_evento = models.DateField()
     hora_evento = models.TimeField()
-    local_evento = models.ForeignKey(Endereco, on_delete=models.CASCADE, related_name="eventos")
+    local_evento = models.CharField(max_length=100)
+    logradouro = models.CharField(max_length=100)
+    numero = models.CharField(max_length=8)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
+    bairro = models.CharField(max_length=100)
+    cep = models.CharField(max_length=9)
+    cidade = models.CharField(max_length=50)
+    estado = models.CharField(max_length=2)
     recursos_adicionais = models.ManyToManyField(RecursoEvento, related_name="orcamentos", blank=True)
     outros_detalhes = models.CharField(max_length=500, blank=True, null=True)
     

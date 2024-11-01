@@ -8,7 +8,7 @@ class TamanhoFotoForm(forms.ModelForm):
         fields = ['medidas', 'preco_unitario']
         widgets = {
             'medidas': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 10x15'}),
-            'preco_unitario': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Preço Unitário'}),
+            'preco_unitario': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 1,50'}),
         }
 
 class PedidoImpressaoForm(forms.ModelForm):
@@ -31,13 +31,13 @@ class RecursoEventoForm(forms.ModelForm):
         fields = ['nome', 'preco']
 
     nome = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do recurso adicional'}),
-        label="Nome do Recurso Adicional",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do recurso personalizado'}),
+        label="Nome",
         required=True
     )
     preco = forms.DecimalField(
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Preço do recurso adicional'}),
-        label="Preço do Recurso Adicional",
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Preço do recurso personalizado'}),
+        label="Preço",
         required=True
     )
 
@@ -53,7 +53,19 @@ class TipoEventoForm(forms.ModelForm):
 class OrcamentoEventoForm(forms.ModelForm):
     class Meta:
         model = OrcamentoEvento
-        fields = ['cliente', 'tipo_evento', 'data_evento', 'hora_evento', 'local_evento', 'recursos_adicionais' , 'outros_detalhes']
+        fields = ['cliente', 'tipo_evento', 'data_evento', 'hora_evento', 'local_evento', 'logradouro', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado', 'recursos_adicionais', 'outros_detalhes']
+        widgets = {
+            'data_evento': forms.DateInput(attrs={'type': 'date'}),
+            'hora_evento': forms.TimeInput(attrs={'type': 'time'}),
+            'local_evento': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Igreja, Salão de Festas, etc.'}),
+            'logradouro': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Rua, Avenida, etc.'}),
+            'numero': forms.TextInput(attrs={'class': 'form-control'}),
+            'complemento': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apartamento, etc.'}),
+            'bairro': forms.TextInput(attrs={'class': 'form-control'}),
+            'cep': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 9}),
+            'cidade': forms.TextInput(attrs={'class': 'form-control'}),
+            'estado': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 2}),
+        }
 
     cliente = forms.ModelChoiceField(
         queryset=Cliente.objects.all(),
@@ -65,28 +77,17 @@ class OrcamentoEventoForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'}),
         label="Tipo de Evento"
     )
-    local_evento = forms.ModelChoiceField(
-        queryset=Endereco.objects.none(),
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label="Local do Evento",
-        empty_label="Escolha um endereço ou selecione 'Outro' para adicionar um novo "
-    )
     recursos_adicionais = forms.ModelMultipleChoiceField(
         queryset=RecursoEvento.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-        label="Selecione os recursos adicionais para este orçamento"
+        label="Recursos Personalizados"
     )
     outros_detalhes = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
-        required=False
+        required=False,
+        label="Outros Detalhes"
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Adiciona a opção "Outro" ao local_evento
-        self.fields['local_evento'].choices = list(self.fields['local_evento'].choices) + [("Outro", "Outro")]
 
 class ClienteForm(forms.ModelForm):
     class Meta:
@@ -102,11 +103,11 @@ class EnderecoForm(forms.ModelForm):
         model = Endereco
         fields = ['logradouro', 'numero', 'complemento', 'bairro', 'cep', 'cidade', 'estado']
         widgets = {
-            'logradouro': forms.TextInput(attrs={'class': 'form-control'}),
+            'logradouro': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Rua, Avenida, etc.'}),
             'numero': forms.TextInput(attrs={'class': 'form-control'}),
-            'complemento': forms.TextInput(attrs={'class': 'form-control'}),
+            'complemento': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apartamento, etc.'}),
             'bairro': forms.TextInput(attrs={'class': 'form-control'}),
-            'cep': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 8}),
+            'cep': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 9}),
             'cidade': forms.TextInput(attrs={'class': 'form-control'}),
             'estado': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 2}),
         }

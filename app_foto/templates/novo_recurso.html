@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Novo Recurso Personalizado{% endblock %}
+{% block content %}
+<h2>Cadastrar Novo Recurso Personalizado</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+<br>
+<a href="{% url 'listar_recursos' %}", class="btn btn-custom">Voltar para Lista de Recursos Personalizados Cadastrados</a>
+{% endblock %}
