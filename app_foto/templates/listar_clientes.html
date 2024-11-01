@@ -27,7 +27,7 @@
             <td>
                 {% if cliente.enderecos %}
                 {{ cliente.enderecos.logradouro }}, {{ cliente.enderecos.numero }}<br>
-                {{ cliente.enderecos.complemento }} - {{ cliente.enderecos.bairro }}<br>
+                {{ cliente.enderecos.bairro }}<br>
                 {{ cliente.enderecos.cidade }}-{{ cliente.enderecos.estado }}
                 {% else %}
                 Endereço não disponível

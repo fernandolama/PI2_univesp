@@ -14,7 +14,7 @@ urlpatterns = [
     # CRUD de Pedidos
     path('pedidos/novo/', views.novo_pedido, name='novo_pedido'),
     path('pedidos/', views.listar_pedidos, name='listar_pedidos'),
-    path('pedidos/<int:pk>/editar/', views.editar_pedido, name='editar_pedido'),
+    path('pedidos/editar/<int:pk>/', views.editar_pedido, name='editar_pedido'),
     path('pedidos/excluir/<int:pk>/', views.excluir_pedido, name='excluir_pedido'), 
 
     # CRUD de Recursos
@@ -23,10 +23,13 @@ urlpatterns = [
     path('recursos/editar/<int:pk>/', views.editar_recurso, name='editar_recurso'),
     path('recursos/excluir/<int:pk>/', views.excluir_recurso, name='excluir_recurso'), 
 
-    # CRUD de Tipos de Eventos
-    
+    # CRUD de Tipos de Evento
+    path('tipo-evento/novo/', views.novo_tipo_evento, name='novo_tipo_evento'),
+    path('tipo-evento/', views.listar_tipos_evento, name='listar_tipos_evento'),
+    path('tipo-evento/editar/<int:pk>/', views.editar_tipo_evento, name='editar_tipo_evento'),
+    path('tipo-evento/excluir/<int:pk>/', views.editar_tipo_evento, name='editar_tipo_evento'),
+
     # CRUD de Orçamentos
-    path('buscar-endereco/<int:cliente_id>/', views.buscar_endereco, name='buscar_endereco'),
     path('orcamentos/novo/', views.novo_orcamento, name='novo_orcamento'),
     path('orcamentos/', views.listar_orcamentos, name='listar_orcamentos'),
     path('orcamentos/editar/<int:pk>/', views.editar_orcamento, name='editar_orcamento'),

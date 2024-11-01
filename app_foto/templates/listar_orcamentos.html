@@ -1,32 +1,46 @@
 {% extends 'base.html' %}
 
-{% block title %}Página Inicial{% endblock %}
+{% block title %}Listar Orçamentos de Eventos{% endblock %}
 
 {% block content %}
 
-<h2>Tipos de Serviço (Orçamentos)</h2>
+<h2>Listar Orçamentos de Eventos</h2>
 
-<table>
-    <tr>
-        <th>Cliente</th>
-        <th>Tipo de Evento</th>
-        <th>Data do Evento</th>
-        <th>Local do Evento</th>
-        <th>Descrição</th>
-        <th>Ações</th>
-    </tr>
-    {% for orcamento in orcamentos %}
-    <tr>
-        <td>{{ orcamento.cliente.nome }}</td>
-        <td>{{ orcamento.get_tipo_evento_display }}</td>
-        <td>{{ orcamento.data_evento }}</td>
-        <td>{{ orcamento.hora_evento }}</td>
-        <td>{{ orcamento.local_evento }}</td>
-        <td><a href="{% url 'editar_orcamento' orcamento.pk %}">Editar</a></td>
-        <td><a href="{% url 'excluir_orcamento' orcamento.pk %}">Excluir</a></td>
-    </tr>
-    {% endfor %}
+<table class="table">
+    <thead>
+        <tr>
+            <th><a href="?order_by=cliente">Cliente</a></th>
+            <th><a href="?order_by=tipo_evento">Tipo de Evento</a></th>
+            <th><a href="?order_by=data_evento">Data</a></th>
+            <th>Hora</th>
+            <th style="width: 20%;">Local</th>
+            <th>Recursos Personalizados</th>
+            <th>Preço Total</th>
+            <th >Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for orcamento in orcamentos %}
+        <tr>
+            <td>{{ orcamento.cliente.nome }}</td>
+            <td>{{ orcamento.tipo_evento.nome }}</td>
+            <td>{{ orcamento.data_evento }}</td>
+            <td>{{ orcamento.hora_evento }}</td>
+            <td><strong>{{ orcamento.local_evento }}</strong><br>{{ orcamento.logradouro }}, {{ orcamento.numero }}<br>{{ orcamento.cidade }}-{{ orcamento.estado }}</td>
+            <td>
+                {% for recurso in orcamento.recursos_adicionais.all %}
+                    {{ recurso.nome }}<br>
+                {% endfor %}
+            </td>
+            <td>R$ {{ orcamento.calcular_total_evento }}</td>
+            <td>
+                <a href="{% url 'editar_orcamento' orcamento.pk %}" class="button-link">Editar</a>
+                <a href="{% url 'excluir_orcamento' orcamento.pk %}" class="button-link button-link-danger" onclick="return confirm('Tem certeza?')">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
-
-<a href="{% url 'novo_orcamento' %}">Novo Orçamento</a>
+<br>
+<a href="{% url 'novo_orcamento' %}" class="btn btn-custom">Elaborar Novo Orçamento</a>
 {% endblock %}
