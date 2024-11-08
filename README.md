@@ -8,5 +8,3 @@ Membros do Grupo015:
 
 Fernanda Sousa Melo Pereira  
 Fernando Araujo Del Lama  
-Rogerio Bortoni Silva  
-Wilian Fernando Moreira Felipe
