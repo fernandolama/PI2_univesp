@@ -2,7 +2,7 @@
 
 Projeto Integrador 2 - Univesp
 
-Protótipo de um Sistema ERP para a gestão dos serviços oferecidos por um fotógrafo profissional.
+"Diga Xis!": protótipo de um Sistema ERP para a gestão dos serviços oferecidos por um fotógrafo profissional.
 
 Membros do Grupo015:
 
